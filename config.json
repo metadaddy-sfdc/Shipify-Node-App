@@ -1,0 +1,8 @@
+{
+	"clientId":"3MVG9Iu66FKeHhIN1_ex9nU.oyRkJxGFqoZ0YG5_fDnbCKvOztdwfAPEJb5V8TaVNNaR_Hto.b8ImlID56zmD",
+	"clientSecret": "535135481858520858",
+	"redirectUri": "http://localhost:3000/oauth/_callback",
+	"apiVersion": "v27.0",
+	"username": "sready@sfone.demo",
+	"password": "salesforce1"
+}
