@@ -33,24 +33,24 @@ app.configure(function() {
 });
 
 app.get('/', function(req, res){
-  res.render("index", { result: 'do post to see result here'});
+	res.render("index", { result: 'do post to see result here'});
 });
 
 
 
 app.post('/', function(req, res){
-  console.log('http post');
+	console.log('http post');
 
 console.log(req.body.signed_request);
-  var sfJSON;
-  try{
-    sfJSON = decode(req.body.signed_request, APP_SECRET);
-  } catch(e) {
-    res.render("error", {error: JSON.stringify(e)});
-    return;
-  }
-  res.render("index", sfJSON);
-    
+	var sfJSON;
+	try{
+		sfJSON = decode(req.body.signed_request, APP_SECRET);
+	} catch(e) {
+		res.render("error", {error: JSON.stringify(e)});
+		return;
+	}
+	res.render("index", sfJSON);
+		
 });
 
 

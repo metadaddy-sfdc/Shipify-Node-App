@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript">
+</script>
+		<title></title>
+	</head>
+	<body>
+		
+		<br>
+		access_token: <input id='access_token' style='width:800px' value='<%= client.oauthToken %>'></input>
+		<br>
+		instance_url: <input id='instance_url' style='width:800px' value='<%=client.instanceUrl %>'></input>
+		<hr>
+
+		<b> GET INVOICE LIST</b>
+			<br>
+		<input type='button' value='Get Invoice List' onclick=getInvoices()></input> 
+		<br>
+		<br>
+<br>
+		<b> SHIP INVOICE </b>
+				<br>
+		Enter Invoice Name: <input id='invoice_name' style='width:600px' value=''></input>
+		<br>
+		Enter Invoice Id to Ship: <input id='invoice_id' style='width:600px' value=''></input>
+		<br>
+		Enter Invoice ParentId to Ship: <input id='parent_id' style='width:600px' value=''></input>
+		<br>
+		<input type='button' value='Ship Invoice' onclick=ship()></input>
+		<hr>
+		<b>Result:</b>
+		<div style='height:500px;width:90%;overflow:auto' id='invoices'></div>
+
+
+
+		<script type="text/javascript">
+
+		function getInvoices() {
+			$.ajax({
+				url: "/invoices",
+				headers: {
+					'Authorization': $('#access_token').val(),
+					'instance_url': $('#instance_url').val()
+				}
+			}).done(function(data, textStatus, jqXHR) {
+				$('#invoices').html(JSON.stringify(data));
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				alert(JSON.stringify(jqXHR));
+			})
+		}
+
+		function ship() {
+			$.ajax({
+				type: 'POST',
+				url: "/ship/" + $('#invoice_id').val(),
+				headers: {
+					'Authorization': $('#access_token').val(),
+					'instance_url': $('#instance_url').val()
+				},
+				data: {
+					"ParentId":$('#parent_id').val(),
+					"Name": $('#invoice_name').val()
+				}
+			}).done(function(data, textStatus, jqXHR) {
+				$('#invoices').html(JSON.stringify(data));
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				$('#invoices').html(JSON.stringify(jqXHR));
+			})
+		}
+		</script>
+	</body>
+</html>
