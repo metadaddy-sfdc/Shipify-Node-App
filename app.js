@@ -137,7 +137,7 @@ function getAuthHeader(header) {
   return h.indexOf('oauth ') == 0 ? header : 'OAuth ' + header;
 }
 
-config.log("process.env.RUNNING_ON_HEROKU = " + process.env.RUNNING_ON_HEROKU);
+console.log("process.env.RUNNING_ON_HEROKU = " + process.env.RUNNING_ON_HEROKU);
 //if not running on Heroku..
 if (!process.env.RUNNING_ON_HEROKU) {
   // Create an HTTP service.
