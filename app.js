@@ -41,7 +41,7 @@ app.get('/', function(req, res){
 app.post('/', function(req, res){
   console.log('http post');
 
-console.log(req.body.signed_request);
+//console.log(req.body.signed_request);
   var sfJSON;
   try{
     sfJSON = decode(req.body.signed_request, APP_SECRET);
@@ -60,7 +60,8 @@ app.post('/ship/:invoiceId/?', postInvoiceInfoToAccountFeed);
 
 
 function getInvoices(req, res) {
-  var q = "SELECT Id, Name, Account__c, Invoice_Total__c FROM Invoice__c";
+  var q = "SELECT Id, Name, Account__c, Account__r.Name, Invoice_Total__c FROM Invoice__c";
+  //console.log(q);
 
   if(!req.headers.authorization || !req.headers.instance_url) {
     res.json(400, {'Error': "Must pass 'instance_url' and 'Authorization' (= session_id) in the header."});
@@ -96,9 +97,12 @@ function postInvoiceInfoToAccountFeed(req, res) {
     return;
   }
 
+  /* This is a randomly generated number, but in reality would be a real number grabbed from this back end system */
+  var orderNumber = Math.floor(Math.random()*90000) + 10000;
+
   var body = {
     ParentId: req.body.ParentId,
-    Body: "Invoice: " + req.body.Name + " has been shipped! " + req.headers.instance_url + "/" + req.params.invoiceId
+    Body: "Invoice: " + req.body.Name + " has been shipped! Your order number is #" + orderNumber  + " " + req.headers.instance_url + "/" + req.params.invoiceId
   }
 
   var authorization = getAuthHeader(req.headers.authorization);
