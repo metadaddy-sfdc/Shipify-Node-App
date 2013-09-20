@@ -149,5 +149,5 @@ if (!process.env.RUNNING_ON_HEROKU) {
   }; 
   https.createServer(options, app).listen(443);
 } else {
-  http.createServer(app).listen(3000);
+  http.createServer(app).listen(process.env.PORT);
 }
