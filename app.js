@@ -11,13 +11,6 @@ console.log(os.hostname());
 var APP_SECRET = process.env.APP_SECRET;
 
 
-// This line is from the Node.js HTTPS documentation.
-var options = {
-  key: fs.readFileSync('/etc/apache2/ssl/host.key'),
-  cert: fs.readFileSync('/etc/apache2/ssl/server.crt')
-};
-
-
 
 // Create a service (the app object is just a callback).
 var app = express();
@@ -150,6 +143,10 @@ if (!process.env.RUNNING_ON_HEROKU) {
   // Create an HTTP service.
   http.createServer(app).listen(80);
   // Create an HTTPS service identical to the HTTP service.
+   var options = {
+    key: fs.readFileSync('/etc/apache2/ssl/host.key'),
+    cert: fs.readFileSync('/etc/apache2/ssl/server.crt')
+  }; 
   https.createServer(options, app).listen(443);
 } else {
   http.createServer(app).listen(3000);
