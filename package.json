@@ -9,7 +9,6 @@
     "express": "3.1.0",
     "ejs": "*",
     "request": "*",
-    "base64url": "*",
-    "async": "*"
+    "base64url": "*"
   }
 }
