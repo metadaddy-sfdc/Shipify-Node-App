@@ -27,13 +27,19 @@ app.configure(function() {
 });
 
 //End points..
-app.get('/', processIndexGET); //HTTP GET to / (not allowed)
-app.post('/signedrequest', processSignedRequest); //Processes signed-request and displays index.ejs
-app.get('/invoices', getInvoices); //returns list of invoices based on warehouse context.
-app.post('/ship/:invoiceId/?', shipInvoice); //Posts to Account Chatter feed and also updates Invoices' status to 'Closed'
+app.get('/', processIndexGET); 
+app.post('/signedrequest', processSignedRequest); 
+app.get('/invoices', getInvoices); 
+app.post('/ship/:invoiceId/?', shipInvoice); 
 
+//HTTP GET to / (not allowed)
+function processIndexGET(req, res) {
+  res.render("error", {
+    error: errors.HTTP_GET_NOT_SUPPORTED
+  });
+}
 
-
+//Processes signed-request and displays index.ejs
 function processSignedRequest(req, res) {
   console.log('in http post');
   console.log('req.body.signed_request = ' + req.body.signed_request);
@@ -47,6 +53,8 @@ function processSignedRequest(req, res) {
   }
 }
 
+//returns list of invoices based on warehouse context. It first gets list of invoice_ids from line_items 
+// and then later gets invoice details of each of those invoice_ids that are not closed.
 function getInvoices(req, res) {
   if (!req.headers.authorization || !req.headers.instance_url) {
     res.json(400, {
@@ -66,7 +74,7 @@ function getInvoices(req, res) {
   shipment.getInvoices(req.headers.authorization, req.headers.instance_url, req.headers.warehouse_id);
 }
 
-
+//Posts to Account Chatter feed and also updates Invoices' status to 'Closed'
 function shipInvoice(req, res) {
   var so = _getShipOptions(req);
   if (!so.authorization || !so.instanceUrl || !so.invAccountId || !so.invoiceName || !so.invoiceId) {
