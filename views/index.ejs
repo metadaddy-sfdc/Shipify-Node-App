@@ -21,24 +21,6 @@
 	<body>
 		
 
-	<!--	<b> GET INVOICE LIST</b>
-			<br>
-		<input type='button' value='Get Invoice List' onclick=getInvoices()></input> 
-		<br>
-		<br>
-<br>
-		<b> SHIP INVOICE </b>
-				<br>
-		Enter Invoice Name: <input id='invoice_name' style='width:600px' value=''></input>
-		<br>
-		Enter Invoice Id to Ship: <input id='invoice_id' style='width:600px' value=''></input>
-		<br>
-		Enter Invoice ParentId to Ship: <input id='parent_id' style='width:600px' value=''></input>
-		<br>
-		<input type='button' value='Ship Invoice' onclick=ship()></input>
-		<hr>
-		<b>Result:</b>
-		<div style='height:500px;width:90%;overflow:auto' id='invoices'></div>-->
 
 		<div id="invoicesListPage">
           <div class="list-view-header">Open Invoices</div>
@@ -47,7 +29,7 @@
           </ul>
       </div> <!-- end invoicesListPage -->
       
-      <div id="shipInvoicePage">
+      <div id="shipInvoicePage" style='display:none'>
           <section class="opportunity-overview">
             <div class="content">
                 <h2 id="accName" />
@@ -61,24 +43,24 @@
                   </section>
                </div>
           </section>
+          <a href='javascript:void(0)' onclick='getInvoices();'>Go Back</a>	
+
       </div> <!-- end shipInvoicePage -->
 
-      <div id="shipped">
+      <div id="shipped" style='display:none'>
+      	  <a href='javascript:void(0)' onclick='getInvoices();'>Go Back</a>
           <section class="opportunity-overview">
+
             <div class="content">
                 <h1>Shipped!</h1>
-                <h2 id="confirmMsg">
+                <h2 id="confirmMsg" />
             </div>
           </section>
+          <a href='javascript:void(0)' onclick='getInvoices();'>Go Back</a>	
+
       </div> <!-- end shipped -->
 
-    <div style="display:none;">
-    	<br>
-		access_token: <input id='access_token' style='width:800px;' value='<%= client.oauthToken %>'></input>
-		<br>
-		instance_url: <input id='instance_url' style='width:800px;' value='<%=client.instanceUrl %>'></input>
-		<hr>
-	</div>
+
 
 
 
@@ -87,22 +69,33 @@
 		var parentId;
 		var invoice_name;
 
-		$(document).ready(function(){
-            $("#shipInvoicePage").hide();
-            $("#shipped").hide();
+		//Note: Values of the variables below are set by the server.
+		var access_token = '<%= oauthToken %>';
+		var instance_url = '<%= instanceUrl %>';
+		var warehouseId = '<%= warehouseId %>';
 
+		$(document).ready(function(){
+          if(access_token == '' || instance_url == '' || warehouseId == '') {
+          	alert('First make HTTP POST to "/" w/ Salesforce signed-request. HTTP GET to  "/" is not allowed');
+          	return;
+          }
             getInvoices();
         });
 
 		function getInvoices() {
+			$("#shipInvoicePage").hide();
+			$('#shipped').hide();
+			$("#openInvoices").empty(); 
+			$("#invoicesListPage").show();
+
 			$.ajax({
 				url: "/invoices",
 				headers: {
-					'Authorization': $('#access_token').val(),
-					'instance_url': $('#instance_url').val()
+					'Authorization': access_token,
+					'instance_url': instance_url,
+					'warehouse_id': warehouseId
 				}
 			}).done(function(data, textStatus, jqXHR) {
-				console.log(data.records);
 				$("#openInvoices").empty();  
 		        $.each(data.records , function(){
 		            var invTotal = this.Invoice_Total__c;
@@ -112,14 +105,14 @@
 		            var accId = this.Account__c;
 		             
 		            var newLi = $('<li></li>');     
-		            var newLink = $('<a href="#" class="content"><h2>'+accName+'</h2><p><strong>'+invTotal
+		            var newLink = $('<a href="#" class="content"><h2>'+accName+'</h2><p><strong>$'+invTotal
 		                         +'</strong>&nbsp;('+invName+')</p><div class="list-view-icons"><span class="icon-right-arrow">'
 		                         +'&nbsp;</span></div></a>');
 
 		            newLink.click(function(e) {
 		                 e.preventDefault();
 		                 $("#accName").text(accName);
-		                 $("#invTotal").text(invTotal);  
+		                 $("#invTotal").text('Invoice Total: $' + invTotal);  
 
 		                 $("#shipInvoicePage").show();
 		                 $("#invoicesListPage").hide();
@@ -142,8 +135,9 @@
 				type: 'POST',
 				url: "/ship/" + invoice_id, //$('#invoice_id').val(),
 				headers: {
-					'Authorization': $('#access_token').val(),
-					'instance_url': $('#instance_url').val()
+					'Authorization': access_token,
+					'instance_url': instance_url,
+					'warehouse_id': warehouseId
 				},
 				data: {
 					"ParentId": parentId, //$('#parent_id').val(),
