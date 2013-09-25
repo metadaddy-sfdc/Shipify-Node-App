@@ -32,7 +32,7 @@ To take advantage of Canvas, we need to do the following:
 
 #### Code snippet that processes signed-request and sends the result back to user/browser.
 
-```javascript
+```
 
 //Processes signed-request and displays index.ejs
 app.post('/signedrequest', processSignedRequest); 
@@ -51,7 +51,6 @@ function processSignedRequest(req, res) {
 
 ```
 
-g
 #### Picture of Canvas App configuration in Salesforce
 
 (click to enlarge)
