@@ -36,6 +36,7 @@ Salesforce Canvas technology allows us to pass Salesforce user information and a
 (click to enlarge)
 
 
+## Converting our app to a Salesforce Canvas app
 
 To take advantage of Canvas, we need to do the following:
 
