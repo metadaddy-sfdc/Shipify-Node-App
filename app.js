@@ -10,13 +10,13 @@ var os = require("os");
 var shipment = require('./shipment.js');
 var errors = require('./errors.js');
 
-//Set API_SECRET via environment variable
-var APP_SECRET = process.env.APP_SECRET;
-
 
 
 // Create a service (the app object is just a callback).
-var app = express();
+var app = module.exports = express();
+
+//Set API_SECRET via environment variable
+app.APP_SECRET = process.env.APP_SECRET;
 
 app.configure(function() {
   app.use(express.favicon());
@@ -29,23 +29,26 @@ app.configure(function() {
 });
 
 //End points..
-app.get('/', processIndexGET); 
-app.post('/signedrequest', processSignedRequest); 
-app.get('/invoices', getInvoices); 
-app.post('/ship/:invoiceId/?', shipInvoice); 
+app.all('/', dontAllowDirectRequestsToIndex);
+app.post('/signedrequest', processSignedRequest);
+app.get('/signedrequest', dontAllowDirectRequestsToIndex);
+app.get('/invoices', getInvoices);
+app.post('/ship/:invoiceId/?', shipInvoice);
 
 //HTTP GET to / (not allowed)
-function processIndexGET(req, res) {
+
+function dontAllowDirectRequestsToIndex(req, res) {
   res.render("error", {
-    error: errors.HTTP_GET_NOT_SUPPORTED
+    error: errors.HTTP_GET_POST_NOT_SUPPORTED
   });
 }
 
 //Processes signed-request and displays index.ejs
+
 function processSignedRequest(req, res) {
   console.log('in http post');
   try {
-    var json = shipment.processSignedRequest(req.body.signed_request, APP_SECRET);
+    var json = shipment.processSignedRequest(req.body.signed_request, app.APP_SECRET);
     res.render("index", json);
   } catch (e) {
     res.render("error", {
@@ -56,6 +59,7 @@ function processSignedRequest(req, res) {
 
 //returns list of invoices based on warehouse context. It first gets list of invoice_ids from line_items 
 // and then later gets invoice details of each of those invoice_ids that are not closed.
+
 function getInvoices(req, res) {
   if (!req.headers.authorization || !req.headers.instance_url) {
     res.json(400, {
@@ -76,6 +80,7 @@ function getInvoices(req, res) {
 }
 
 //Posts to Account Chatter feed and also updates Invoices' status to 'Closed'
+
 function shipInvoice(req, res) {
   var so = _getShipOptions(req);
   if (!so.authorization || !so.instanceUrl || !so.invAccountId || !so.invoiceName || !so.invoiceId) {
@@ -105,17 +110,20 @@ function _getShipOptions(req) {
   }
 }
 
-//if not running on Heroku..
-if (!process.env.RUNNING_ON_HEROKU) {
-  // Create an HTTP service.
-  http.createServer(app).listen(80);
-  // Create an HTTPS service identical to the HTTP service.
-  var options = {
-    key: fs.readFileSync('/etc/apache2/ssl/host.key'),
-    cert: fs.readFileSync('/etc/apache2/ssl/server.crt')
-  };
-  https.createServer(options, app).listen(443);
-} else {
-  http.createServer(app).listen(process.env.PORT);
+//Only run as server if not called from a testing framework.
+if (!module.parent) {
+  //if not running on Heroku..
+  if (!process.env.RUNNING_ON_HEROKU) {
+    // Create an HTTP service.
+    http.createServer(app).listen(80);
+    // Create an HTTPS service identical to the HTTP service.
+    var options = {
+      key: fs.readFileSync('/etc/apache2/ssl/host.key'),
+      cert: fs.readFileSync('/etc/apache2/ssl/server.crt')
+    };
+    https.createServer(options, app).listen(443);
+  } else {
+    http.createServer(app).listen(process.env.PORT);
+  }
+  console.log("process.env.RUNNING_ON_HEROKU = " + (process.env.RUNNING_ON_HEROKU ? 'true' : 'false'));
 }
-console.log("process.env.RUNNING_ON_HEROKU = " + (process.env.RUNNING_ON_HEROKU ? 'true' : 'false'));

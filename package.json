@@ -11,5 +11,15 @@
     "request": "*",
     "base64url": "*",
     "salesforce-signed-request": "*"
+  },
+  "devDependencies": {
+    "supertest": "*",
+    "mocha": "*",
+    "should": "*",
+    "chai": "*",
+    "nock": "*"
+  },
+  "scripts": {
+    "test": "make test-all"
   }
 }

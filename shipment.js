@@ -4,9 +4,10 @@ var events = require('events');
 var util = require('util');
 var request = require('request')
 
-	function Shipment() {
-		events.EventEmitter.call(this);
-	}
+function Shipment() {
+	events.EventEmitter.call(this);
+}
+
 util.inherits(Shipment, events.EventEmitter);
 
 Shipment.prototype.processSignedRequest = function processSignedRequest(signedRequest, APP_SECRET) {
@@ -25,7 +26,6 @@ Shipment.prototype.getInvoices = function getInvoices(authorization, instanceUrl
 		var warehouseId15Chars = warehouseId.substr(0, 15);
 		q += " where Warehouse__C = '" + warehouseId + "' OR Warehouse__C = '" + warehouseId15Chars + "'";
 	}
-
 	var reqOptions = {
 		url: instanceUrl + '/services/data/v28.0/query?q=' + q,
 		headers: {
