@@ -22,6 +22,21 @@ While the app is fine, the user still has to:
 ## The Solution
 Salesforce Canvas technology allows us to pass Salesforce user information and access_token in an encrypted string called: `signed_request`. Further, Canvas also allows embedding third party apps as 'tabs', 'links', 'buttons' etc at various location inside Salesforce.
 
+
+#### Picture of highly contextual 'ship button'
+
+<img src="https://raw.github.com/rajaraodv/shipment/master/images/ship-it-button.png" height="400" width="700px" />
+
+(click to enlarge)
+
+
+#### Picture of 'Shipment' link in Chatter tab.
+<img src="https://raw.github.com/rajaraodv/shipment/master/images/chatter-tab.png" height="400" width="700px" />
+
+(click to enlarge)
+
+
+
 To take advantage of Canvas, we need to do the following:
 
 
@@ -96,22 +111,5 @@ function processSignedRequest(req, res) {
 
 ```
 
-#### Picture of Canvas App configuration in Salesforce
-
-<img src="https://raw.github.com/rajaraodv/shipment/master/images/salesforce-admin-canvas.png" height="400" width="700px" />
-
-(click to enlarge)
-
-#### Picture of highly contextual 'ship button'
-
-<img src="https://raw.github.com/rajaraodv/shipment/master/images/ship-it-button.png" height="400" width="700px" />
-
-(click to enlarge)
-
-
-#### Picture of 'Shipment' link in Chatter tab.
-<img src="https://raw.github.com/rajaraodv/shipment/master/images/chatter-tab.png" height="400" width="700px" />
-
-(click to enlarge)
 
 
