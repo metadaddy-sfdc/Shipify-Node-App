@@ -2,4 +2,51 @@
 ![image](https://raw.github.com/rajaraodv/shipment/master/shipment-readme.jpg)
 
 ## About
-This application is a sample Shipment Fulfillment app called 'Shipify' that acts as a proof of concept for a warehouse shipping app. The application is intended to integrate with Force.com and surface itself in Salesforce using Force.com Canvas. This application takes in the Signed Request sent from Salesforce, and then the applicaiton unsigns it and grabs the context of the user and org information in order to perform its interactions (with user context) with Salesforce. 
+This is a proof of concept shipment fulfillment app that shows how to tightly integrate a 3rd party app like this one, into Salesforce using <b>Salesforce Canvas</b> technology.
+
+## How it Works
+On its own it performs 2 tasks:
+
+1. Displays list of `open Invoice` items. 
+2. And allows a Salesforce user to 'ship' an invoice. i.e. Marks the invoice as `closed` and also posts a message to that invoice's Account chatter feed indicating that the Invoice has been shipped.
+
+## The problem
+While the app is fine, the user still has to:
+
+1. Open this app in a different browser tab even though the user is in Salesforce in another tab.
+2. Login via OAuth 
+3. Filter invoices by warehouse
+4. And finally, ship it.
+
+
+## The Solution
+Salesforce Canvas technology allows us to pass Salesforce user information and access_token in an encrypted string called: `signed_request`. Further, Canvas also allows embedding third party apps as 'tabs', 'links', 'buttons' etc at various location inside Salesforce.
+
+To take advantage of Canvas, we need to do the following:
+
+
+1. Create a new `HTTP POST` endpoint like `https://www.myshipmentapp.com/signed-request`on our 3rd party app. 
+
+```javascript
+
+//Processes signed-request and displays index.ejs
+app.post('/signedrequest', processSignedRequest); 
+
+function processSignedRequest(req, res) {
+  console.log('in http post');
+  try {
+    var json = shipment.processSignedRequest(req.body.signed_request, APP_SECRET);
+    res.render("index", json);
+  } catch (e) {
+    res.render("error", {
+      "error": errors.SIGNED_REQUEST_PARSING_ERROR
+    });
+  }
+}
+
+```
+
+2. Ask (or login as) Salesforce Administrator and register this app as a Canvas app `[Admin Name] > Setup > Create > apps > Connected Apps > New`.  
+3. Provide the end point as the `Canvas app URL`.
+
+![image](https://raw.github.com/rajaraodv/shipment/master/salesforce-admin-canvas.png)
