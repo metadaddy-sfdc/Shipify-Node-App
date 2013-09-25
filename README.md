@@ -94,4 +94,27 @@ To go one step further, let's contextually embed this app as a button (say 'Ship
 4.That's it. We have now converted our 3rd party app to become a Salesforce Canvas app. Our app will now show up at various places with in Salesforce making it seamless for users to use its functionalities.
 
 
+#The Server
+The server has the following HTTP end points.
+
+```
+
+//Processes signed-request and displays index.ejs
+app.post('/signedrequest', processSignedRequest);
+
+//Returns list of invoices based on warehouse context. It first gets list of invoice_ids from 
+//line_items and then later gets invoice details of each of those invoice_ids that are not //closed.
+app.get('/invoices', getInvoices);
+
+//Posts to Account Chatter feed and also updates Invoices' status to 'Closed'
+app.post('/ship/:invoiceId/?', shipInvoice);
+
+//Dont allow direct HTTP requests to "/"
+app.all('/', dontAllowDirectRequestsToIndex);
+
+//Dont allow direct HTTP GET (POST is allowed) requests to "/signedrequest"
+app.get('/signedrequest', dontAllowDirectRequestsToIndex);
+
+
+```
 
