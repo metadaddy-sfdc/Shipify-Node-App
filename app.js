@@ -9,6 +9,8 @@ var request = require('request');
 var os = require("os");
 var shipment = require('./shipment.js');
 var errors = require('./errors.js');
+
+//Set API_SECRET via environment variable
 var APP_SECRET = process.env.APP_SECRET;
 
 
