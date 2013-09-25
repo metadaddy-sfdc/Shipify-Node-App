@@ -42,7 +42,6 @@ function processIndexGET(req, res) {
 //Processes signed-request and displays index.ejs
 function processSignedRequest(req, res) {
   console.log('in http post');
-  console.log('req.body.signed_request = ' + req.body.signed_request);
   try {
     var json = shipment.processSignedRequest(req.body.signed_request, APP_SECRET);
     res.render("index", json);

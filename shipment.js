@@ -1,4 +1,4 @@
-var decode = require('./decode.js');
+var decode = require('salesforce-signed-request');
 var errors = require('./errors.js');
 var events = require('events');
 var util = require('util');
