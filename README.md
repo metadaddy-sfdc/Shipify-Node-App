@@ -53,20 +53,19 @@ function processSignedRequest(req, res) {
 
 #### Picture of Canvas App configuration in Salesforce
 
-(click to enlarge)
-
 <img src="https://raw.github.com/rajaraodv/shipment/master/images/salesforce-admin-canvas.png" height="400" width="600px" />
 
-#### Picture of highly contextual 'ship button'
 (click to enlarge)
+
+#### Picture of highly contextual 'ship button'
 
 <img src="https://raw.github.com/rajaraodv/shipment/master/images/ship-it-button.png" height="400" width="600px" />
 
-
-#### Picture of 'Shipment' link in Chatter tab.
 (click to enlarge)
 
-<img src="https://raw.github.com/rajaraodv/shipment/master/images/chatter-tab.png" height="400" width="600px" />
 
+#### Picture of 'Shipment' link in Chatter tab.
+<img src="https://raw.github.com/rajaraodv/shipment/master/images/chatter-tab.png" height="400" width="600px" />
+(click to enlarge)
 
 
