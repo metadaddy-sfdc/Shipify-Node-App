@@ -26,8 +26,34 @@ To take advantage of Canvas, we need to do the following:
 
 
 1. Create a new `HTTP POST` endpoint like `https://www.myshipmentapp.com/signed-request`on our 3rd party app. 
+
+
+```javascript
+
+//Processes signed-request and displays index.ejs
+app.post('/signedrequest', processSignedRequest); 
+
+function processSignedRequest(req, res) {
+  console.log('in http post');
+  try {
+    var json = shipment.processSignedRequest(req.body.signed_request, APP_SECRET);
+    res.render("index", json);
+  } catch (e) {
+    res.render("error", {
+      "error": errors.SIGNED_REQUEST_PARSING_ERROR
+    });
+  }
+}
+
+```
+
 2. Ask (or login as) Salesforce Administrator and register this app as a Canvas app `[Admin Name] > Setup > Create > apps > Connected Apps > New`.  
+
+
 3. Provide the end point from #1 as the `Canvas app URL`. The configuration might look like <a href='https://raw.github.com/rajaraodv/shipment/master/images/salesforce-admin-canvas.png' target='_blank'>this</a>.
+<img src="https://raw.github.com/rajaraodv/shipment/master/images/salesforce-admin-canvas.png" height="400" width="700px" />
+
+(click to enlarge)
 
 
 #### Deep Contextual Embedding 
@@ -45,6 +71,7 @@ To go one step further, let's contextually embed this app as a button (say 'Ship
 <img src="https://raw.github.com/rajaraodv/shipment/master/images/visualforcepage-canvas-wrapper.png" height="400" width="700px" /> 
 
 2.Open `[Admin Name] > Setup > Create > Objects` and open up the custom object. In our case, `warehouse` object. 
+
 2.1 Then under `"Buttons, Links, and Actions" > New`, create an action button called `Ship It` that opens up the Visualforce page we had created earlier in Step 1.
 <img src="https://raw.github.com/rajaraodv/shipment/master/images/ship-it-button-code.png" height="400" width="700px" /> 
 
