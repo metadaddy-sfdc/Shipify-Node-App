@@ -26,6 +26,11 @@ To take advantage of Canvas, we need to do the following:
 
 
 1. Create a new `HTTP POST` endpoint like `https://www.myshipmentapp.com/signed-request`on our 3rd party app. 
+2. Ask (or login as) Salesforce Administrator and register this app as a Canvas app `[Admin Name] > Setup > Create > apps > Connected Apps > New`.  
+3. Provide the end point as the `Canvas app URL`.
+
+
+#### Code snippet that processes signed-request and sends the result back to user/browser.
 
 ```javascript
 
@@ -46,7 +51,6 @@ function processSignedRequest(req, res) {
 
 ```
 
-2. Ask (or login as) Salesforce Administrator and register this app as a Canvas app `[Admin Name] > Setup > Create > apps > Connected Apps > New`.  
-3. Provide the end point as the `Canvas app URL`.
+#### Picture 
 
 ![image](https://raw.github.com/rajaraodv/shipment/master/salesforce-admin-canvas.png)
