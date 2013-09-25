@@ -1,5 +1,5 @@
 <p align="center">
-![image](https://raw.github.com/rajaraodv/shipment/master/shipment-readme.jpg)
+![image](https://raw.github.com/rajaraodv/shipment/master/images/shipment-readme.jpg)
 
 ## About
 This is a proof of concept shipment fulfillment app that shows how to tightly integrate a 3rd party app like this one, into Salesforce using <b>Salesforce Canvas</b> technology.
@@ -13,10 +13,10 @@ On its own it performs 2 tasks:
 ## The problem
 While the app is fine, the user still has to:
 
-1. Open this app in a different browser tab even though the user is in Salesforce in another tab.
+1. Open this app in a different browser tab even though he is in Salesforce in another tab.
 2. Login via OAuth 
-3. Filter invoices by warehouse
-4. And finally, ship it.
+3. Filter invoices by Warehouse (i.e. no context as this app doesnt know where in Salesforce the user is currently in)
+4. And finally, select the invoice ship it.
 
 
 ## The Solution
@@ -52,6 +52,15 @@ function processSignedRequest(req, res) {
 ```
 
 #### Picture of Canvas App configuration in Salesforce
-(click to enlarge)
 
-  <img src="https://raw.github.com/rajaraodv/shipment/master/salesforce-admin-canvas.png" height="400" width="600px" />
+(click to enlarge)<img src="https://raw.github.com/rajaraodv/shipment/master/images/salesforce-admin-canvas.png" height="400" width="600px" />
+
+#### Picture of highly contextual 'ship button'
+(click to enlarge)<img src="https://raw.github.com/rajaraodv/shipment/master/images/ship-it-button.png" height="400" width="600px" />
+
+
+#### Picture of 'Shipment' link in Chatter tab.
+(click to enlarge)<img src="https://raw.github.com/rajaraodv/shipment/master/images/chatter-tab.png" height="400" width="600px" />
+
+
+
