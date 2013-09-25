@@ -23,7 +23,7 @@ While the app is fine, the user still has to:
 Salesforce Canvas technology allows us to pass Salesforce user information and access_token in an encrypted string called: `signed_request`. Further, Canvas also allows embedding third party apps as 'tabs', 'links', 'buttons' etc at various location inside Salesforce.
 
 
-#### Picture of highly contextual 'ship button'
+#### Picture of highly contextual 'Ship It' button
 
 <img src="https://raw.github.com/rajaraodv/shipment/master/images/ship-it-button.png" height="400" width="700px" />
 
