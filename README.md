@@ -15,8 +15,8 @@ While the app is fine, the user still has to:
 
 1. Open this app in a different browser tab even though he is in Salesforce in another tab.
 2. Login via OAuth 
-3. Filter invoices by Warehouse (i.e. no context as this app doesnt know where in Salesforce the user is currently in)
-4. And finally, select the invoice ship it.
+3. Filter invoices by Warehouse because no context as this app doesn't know where in Salesforce the user is currently in.
+4. And finally, select an Invoice and ship it.
 
 
 ## The Solution
