@@ -91,7 +91,7 @@ To go one step further, let's contextually embed this app as a button (say 'Ship
 3.Then under `"Buttons, Links, and Actions" > New`, create an action button called `Ship It` that opens up the Visualforce page we had created earlier in Step 1.
 <img src="https://raw.github.com/rajaraodv/shipment/master/images/ship-it-button-code.png" height="400" width="700px" /> 
 
-
+4.That's it. We have now converted our 3rd party app to become a Salesforce Canvas app. Our app will now show up at various places with in Salesforce making it seamless for users to use its functionalities.
 
 
 
