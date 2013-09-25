@@ -88,29 +88,10 @@ To go one step further, let's contextually embed this app as a button (say 'Ship
 <br>
 2.Open `[Admin Name] > Setup > Create > Objects` and open up the custom object. In our case, `warehouse` object. 
 
-2.1 Then under `"Buttons, Links, and Actions" > New`, create an action button called `Ship It` that opens up the Visualforce page we had created earlier in Step 1.
+3.Then under `"Buttons, Links, and Actions" > New`, create an action button called `Ship It` that opens up the Visualforce page we had created earlier in Step 1.
 <img src="https://raw.github.com/rajaraodv/shipment/master/images/ship-it-button-code.png" height="400" width="700px" /> 
 
-#### Code snippet that processes signed-request and sends the result back to user/browser.
 
-```javascript
-
-//Processes signed-request and displays index.ejs
-app.post('/signedrequest', processSignedRequest); 
-
-function processSignedRequest(req, res) {
-  console.log('in http post');
-  try {
-    var json = shipment.processSignedRequest(req.body.signed_request, APP_SECRET);
-    res.render("index", json);
-  } catch (e) {
-    res.render("error", {
-      "error": errors.SIGNED_REQUEST_PARSING_ERROR
-    });
-  }
-}
-
-```
 
 
 
