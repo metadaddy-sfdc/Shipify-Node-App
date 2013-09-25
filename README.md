@@ -51,6 +51,10 @@ function processSignedRequest(req, res) {
 
 ```
 
-#### Picture 
+#### Picture of Canvas App configuration in Salesforce
+(click to enlarge)
+<p align='center'>
+  <img src="https://raw.github.com/rajaraodv/shipment/master/salesforce-admin-canvas.png" height="400" width="600px" />
+</p>
 
-![image](https://raw.github.com/rajaraodv/shipment/master/salesforce-admin-canvas.png)
+
