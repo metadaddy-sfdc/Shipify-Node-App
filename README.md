@@ -1,6 +1,10 @@
 <p align="center">
 ![image](https://raw.github.com/rajaraodv/shipment/master/images/shipment-readme.jpg)
 
+
+#### Continuous Integration Result
+[![Build Status](https://travis-ci.org/rajaraodv/shipment.png?branch=master)](https://travis-ci.org/rajaraodv/shipment)
+
 ## About
 This is a proof of concept shipment fulfillment app that shows how to tightly integrate a 3rd party app like this one, into Salesforce using <b>Salesforce Canvas</b> technology.
 
