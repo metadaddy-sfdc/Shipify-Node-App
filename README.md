@@ -55,9 +55,9 @@ function processSignedRequest(req, res) {
 
 (click to enlarge)
 
-<p align="center">
+
 <img src="https://raw.github.com/rajaraodv/shipment/master/images/salesforce-admin-canvas.png" height="400" width="600px" />
-</p>
+
 
 #### Picture of highly contextual 'ship button'
 (click to enlarge)
