@@ -122,3 +122,39 @@ app.get('/signedrequest', dontAllowDirectRequestsToIndex);
 
 ```
 
+#### To Run locally
+
+Pre-requisites:
+
+1. Have the <a href='http://www.salesforce.com/us/developer/docs/workbook/workbook.pdf'>Warehouse app</a> fully built and running in your organization. You can find the tutorial in our workbook.
+2. Have Self-signed certificate installed and have allowed your browser to accept it.
+
+
+
+#####Steps for self-signed certificate and running it locally:
+
+Canvas app needs this server to be using `https`. 
+
+1. First create a self-signed certificate and key by following instructions <a href='https://devcenter.heroku.com/articles/ssl-certificate-self' target='_blank'>here</a> or from anywhere on the internet.
+2. Make sure the .key file's name is `host.key` and is located in `/etc/apache2/ssl/host.key` folder.
+3. Make sure the .crt file's name is `server.crt` and is located in `/etc/apache2/ssl/server.crt` folder.
+4. Run the server using `sudo APP_SECRET="<Your APP Secret>" app.js`
+5. Open browser and go to `https://localhost`.
+6. Browsers will say that the certificate is not trusted, do you want to continue. Press Continue.
+7. Now that you have allowed browser to accept self-signed certificate, you can login to Salesforce and access the app.
+
+<b>Note: Step 6 is a BIG Gotcha. Without forcing browser to accept self-signed certificate, Canvas app simply wont work </b>
+
+
+
+
+
+
+
+
+####Test
+
+1. Install Mocha, expect, chai & should by running npm install
+2. You may want to install Mocha globally by running npm install -g mocha
+3. Simply run mocha in the command line.
+
