@@ -118,6 +118,8 @@ Shipment.prototype.ship = function ship(so) {
 			body: JSON.stringify(quickActionBody)
 
 		}
+
+		alert(delivery);
 	}
 }
 
