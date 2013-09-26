@@ -15,7 +15,7 @@ var errors = require('./errors.js');
 // Create a service (the app object is just a callback).
 var app = module.exports = express();
 
-//Set API_SECRET via environment variable
+//Set APP_SECRET via environment variable
 app.APP_SECRET = process.env.APP_SECRET;
 
 app.configure(function() {

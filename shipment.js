@@ -2,7 +2,9 @@ var decode = require('salesforce-signed-request');
 var errors = require('./errors.js');
 var events = require('events');
 var util = require('util');
-var request = require('request')
+var request = require('request');
+var warehouseId15Chars;
+var orderNumber;
 
 function Shipment() {
 	events.EventEmitter.call(this);
@@ -23,7 +25,7 @@ Shipment.prototype.getInvoices = function getInvoices(authorization, instanceUrl
 	var q = 'SELECT Invoice__c From Line_Item__C';
 
 	if (warehouseId && warehouseId != 'undefined' && warehouseId != '' && (warehouseId.length == 15 || warehouseId.length == 18)) {
-		var warehouseId15Chars = warehouseId.substr(0, 15);
+		warehouseId15Chars = warehouseId.substr(0, 15);
 		q += " where Warehouse__C = '" + warehouseId + "' OR Warehouse__C = '" + warehouseId15Chars + "'";
 	}
 	var reqOptions = {
@@ -97,6 +99,26 @@ Shipment.prototype.ship = function ship(so) {
 			self.emit('error', err);
 		}
 	});
+
+	if(warehouseId15Chars != 'undefined'){
+		var quickActionBody = {
+			Warehouse__c: warehouseId15Chars,
+			Invoice__c: so.invoiceId,
+			Order_Number__c: orderNumber
+
+		}
+
+		var delivery = {
+			url: so.instanceUrl + '/services/data/v28.0/sobjects/Warehouse__c/quickActions/Create_Delivery',
+			method: 'POST',
+			headers: {
+				'Authorization': authorization,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(quickActionBody)
+
+		}
+	}
 }
 
 Shipment.prototype._closeInvoice = function _closeInvoice(so) {
@@ -129,7 +151,7 @@ Shipment.prototype._closeInvoice = function _closeInvoice(so) {
 
 Shipment.prototype._getShipmentChatterMsg = function _getShipmentChatterMsg(so) {
 	// This is a randomly generated number, but in reality would be a real number grabbed from this back end system 
-	var orderNumber = Math.floor(Math.random() * 90000) + 10000;
+	orderNumber = Math.floor(Math.random() * 90000) + 10000;
 	return "Invoice: " + so.invoiceName + " has been shipped! Your order number is #" + orderNumber + " " + so.instanceUrl + "/" + so.invoiceId
 }
 
