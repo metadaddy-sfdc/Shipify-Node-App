@@ -91,14 +91,6 @@ Shipment.prototype.ship = function ship(so) {
 	};
 
 	var self = this;
-	request(reqOptions, function(err, response, body) {
-		var statusCode = response.statusCode;
-		if (!err && (statusCode == 200 || statusCode == 201)) {
-			self._closeInvoice(so);
-		} else {
-			self.emit('error', err);
-		}
-	});
 
 	if(warehouseId15Chars != 'undefined'){
 		var quickActionBody = {
@@ -118,14 +110,22 @@ Shipment.prototype.ship = function ship(so) {
 
 		};
 
-		request(delivery, function(err, response, quickActionBody) {
+		request(delivery, function(err, response, body) {
 			var statusCode = response.statusCode;
 			if (err) {
 				self.emit('error', err);
 			}
 		});
-		alert(delivery);
 	}
+
+	request(reqOptions, function(err, response, body) {
+		var statusCode = response.statusCode;
+		if (!err && (statusCode == 200 || statusCode == 201)) {
+			self._closeInvoice(so);
+		} else {
+			self.emit('error', err);
+		}
+	});
 };
 
 Shipment.prototype._closeInvoice = function _closeInvoice(so) {
