@@ -105,15 +105,14 @@ Shipment.prototype.ship = function ship(so) {
 			Warehouse__c: warehouseId15Chars,
 			Invoice__c: so.invoiceId,
 			Order_Number__c: orderNumber
-
 		};
 
 		var delivery = {
-			url: so.instanceUrl + '/services/data/v28.0/sobjects/Warehouse__c/quickActions/Create_Delivery',
+			url: so.instanceUrl + '/services/data/v28.0/sobjects/Warehouse__c/quickActions/Create_Delivery/',
 			method: 'POST',
 			headers: {
 				'Authorization': authorization,
-				'Content-Type': 'application/json',
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(quickActionBody)
 
