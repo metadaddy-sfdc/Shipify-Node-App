@@ -120,7 +120,7 @@ Shipment.prototype.ship = function ship(so) {
 
 		alert(delivery);
 	}
-}
+};
 
 Shipment.prototype._closeInvoice = function _closeInvoice(so) {
 	var authorization = this._formatAuthHeader(so.authorization);
