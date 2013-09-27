@@ -118,7 +118,7 @@ Shipment.prototype.ship = function ship(so) {
 
 		};
 
-		request(delivery, function(err, response, body) {
+		request(delivery, function(err, response, quickActionBody) {
 			var statusCode = response.statusCode;
 			if (err) {
 				self.emit('error', err);
