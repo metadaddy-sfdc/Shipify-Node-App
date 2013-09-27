@@ -106,7 +106,7 @@ Shipment.prototype.ship = function ship(so) {
 			Invoice__c: so.invoiceId,
 			Order_Number__c: orderNumber
 
-		}
+		};
 
 		var delivery = {
 			url: so.instanceUrl + '/services/data/v28.0/sobjects/Warehouse__c/quickActions/Create_Delivery',
@@ -117,7 +117,7 @@ Shipment.prototype.ship = function ship(so) {
 			},
 			body: JSON.stringify(quickActionBody)
 
-		}
+		};
 
 		alert(delivery);
 	}
@@ -129,7 +129,7 @@ Shipment.prototype._closeInvoice = function _closeInvoice(so) {
 		'Status__C': 'Closed'
 	}
 	var reqOptions = {
-		url: so.instanceUrl + '/services/data/v28.0/sobjects/Invoice__C/' + so.invoiceId,
+		url: so.instanceUrl + '/services/data/v28.0/sobjects/Invoice__c/' + so.invoiceId,
 		method: 'PATCH',
 		headers: {
 			'Authorization': authorization,
