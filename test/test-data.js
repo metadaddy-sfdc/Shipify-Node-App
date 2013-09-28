@@ -1,4 +1,18 @@
-exports.postToAccntChatterPostResult = {"id":"0D5R00000004axpKAA","success":true,"errors":[]};
+exports.postToAccntChatterPostResult = {
+  "id": "0D5R00000004axpKAA",
+  "success": true,
+  "errors": []
+};
+
+exports.createDeliveryResult = {
+  "id": "a04R00000007y0zIAA",
+  "feedItemIds": [
+    "0D5R00000004bGQKAY"
+  ],
+  "success": true,
+  "created": true,
+  "errors": []
+};
 
 exports.invoices = {
   "totalSize": 4,
