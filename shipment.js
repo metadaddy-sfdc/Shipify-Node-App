@@ -177,7 +177,8 @@ Shipment.prototype.createDelivery = function createDelivery(so) {
 		contextId: so.warehouseId.chars15,
 		record: {
 			Invoice__c: so.invoiceId,
-			Order_Number__c: so.orderNumber
+			Order_Number__c: so.orderNumber,
+			Warehouse__c: so.warehouseId
 		}
 	};
 
