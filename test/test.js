@@ -5,6 +5,13 @@ var should = require('chai').should();
 var app = require('../app');
 var errors = require('../errors.js');
 
+var Shipment = require('../shipment.js');
+var shipment;
+
+beforeEach(function(done) {
+	shipment = new Shipment();
+	done();
+});
 
 //SETUP..
 var test_data = require('./test-data');
@@ -91,6 +98,65 @@ describe('Testing POST /ship/:invoiceId End point', function() {
 	});
 });
 
+describe('Test EventEmitter parallelizm __test', function() {
+
+	it('should call __test binding 100 times if we QUICKLY call a method (that triggers an event) 10 times use Shipment obj as singleton', function(done) {
+		var singletonShipmentCallCnt = 0;
+		var count = 10;
+		var doneCnt = 0;
+
+		function callTest(index) {
+			//var shipment = new Shipment(); //Comment this so that we can use it as a singleton (1 obj is create at beforetest)	
+			shipment.on('__test', function(cntFrmTest) {
+				singletonShipmentCallCnt++;
+				if (++doneCnt == count) {
+					setTimeout(function() {
+						console.log(singletonShipmentCallCnt);
+						expect(singletonShipmentCallCnt).to.equal(100);
+						done();
+					}, 1);
+				}
+
+			});
+			shipment.__test(index);
+		};
+
+		//call 1o times
+		for (var i = 0; i < count; i++) {
+			callTest(i);
+		}
+
+	});
+
+	it('should call __test binding 10 times if we QUICKLY call a method (that triggers an event) 10 times and create Shipment object everytime', function(done) {
+		var singletonShipmentCallCnt = 0;
+		var count = 10;
+		var doneCnt = 0;
+
+		function callTest(index) {
+			var shipment = new Shipment();// new Shipment object		
+			shipment.on('__test', function(cntFrmTest) {
+				singletonShipmentCallCnt++;
+				if (++doneCnt == count) {
+					setTimeout(function() {
+						console.log(singletonShipmentCallCnt);
+						expect(singletonShipmentCallCnt).to.equal(10);
+						done();
+					}, 1);
+				}
+
+			});
+			shipment.__test(index);
+		};
+
+		//call 10 times
+		for (var i = 0; i < count; i++) {
+			callTest(i);
+		}
+
+	});	
+
+});
 describe('Testing GET /invoices End point', function() {
 	it('Should return invoices when valid requests are made to /invoices ', function(done) {
 		//mock..

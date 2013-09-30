@@ -230,7 +230,7 @@ Shipment.prototype._setShipmentChatterMsg = function _setShipmentChatterMsg(so) 
 };
 
 Shipment.prototype._setOrderNumber = function _setOrderNumber(so) {
-	so.orderNumber = Math.floor(Math.random() * 90000) + 10000;;
+	so.orderNumber = Math.floor(Math.random() * 90000) + 10000;
 };
 
 //Validates and returns either null, OR, {chars18: First_18_chars_of_warehouseId, chars15: First_15_chars_of_warehouseId}
@@ -241,7 +241,7 @@ Shipment.prototype._formatWarehouseId = function _formatWarehouseId(warehouseId)
 			chars15: warehouseId.substr(0, 15)
 		}
 	}
-}
+};
 
 Shipment.prototype._getIdsWhereClause = function _getIdsWhereClause(invoices) {
 	var items = invoices.records;
@@ -256,11 +256,20 @@ Shipment.prototype._getIdsWhereClause = function _getIdsWhereClause(invoices) {
 		}
 	}
 	return "(" + ids.join(' OR ') + ")";
-}
+};
 
 Shipment.prototype._formatAuthHeader = function _formatAuthHeader(header) {
 	var h = header.toLowerCase(header);
 	return h.indexOf('oauth ') == 0 ? header : 'OAuth ' + header;
-}
+};
 
-exports = module.exports = new Shipment();
+
+Shipment.prototype.__test = function __test(count) {
+	var self = this;
+	setTimeout(function() {
+		self.emit('__test', count);
+	}, 1);
+};
+
+
+exports = module.exports = Shipment;
