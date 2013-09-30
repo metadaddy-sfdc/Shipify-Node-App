@@ -1,6 +1,10 @@
 <p align="center">
 ![image](https://raw.github.com/rajaraodv/shipment/master/images/shipment-readme.jpg)
 
+
+#### Continuous Integration Result
+[![Build Status](https://travis-ci.org/rajaraodv/shipment.png?branch=master)](https://travis-ci.org/rajaraodv/shipment)
+
 ## About
 This is a proof of concept shipment fulfillment app that shows how to tightly integrate a 3rd party app like this one, into Salesforce using <b>Salesforce Canvas</b> technology.
 
@@ -16,7 +20,7 @@ While the app is fine, the user still has to:
 1. Open this app in a different browser tab even though he is in Salesforce in another tab.
 2. Login via OAuth 
 3. Filter invoices by Warehouse because no context as this app doesn't know where in Salesforce the user is currently in.
-4. Finally, select an Invoice and ship it.
+4. And finally, select an Invoice and ship it.
 
 
 ## The Solution
@@ -94,4 +98,63 @@ To go one step further, let's contextually embed this app as a button (say 'Ship
 4.That's it. We have now converted our 3rd party app to become a Salesforce Canvas app. Our app will now show up at various places with in Salesforce making it seamless for users to use its functionalities.
 
 
+#The Server
+The server has the following HTTP end points.
+
+```
+
+//Processes signed-request and displays index.ejs
+app.post('/signedrequest', processSignedRequest);
+
+//Returns list of invoices based on warehouse context. It first gets list of invoice_ids from 
+//line_items and then later gets invoice details of each of those invoice_ids that are not //closed.
+app.get('/invoices', getInvoices);
+
+//Posts to Account Chatter feed and also updates Invoices' status to 'Closed'
+app.post('/ship/:invoiceId/?', shipInvoice);
+
+//Dont allow direct HTTP requests to "/"
+app.all('/', dontAllowDirectRequestsToIndex);
+
+//Dont allow direct HTTP GET (POST is allowed) requests to "/signedrequest"
+app.get('/signedrequest', dontAllowDirectRequestsToIndex);
+
+
+```
+
+#### To Run locally
+
+Pre-requisites:
+
+1. Have the <a href='http://www.salesforce.com/us/developer/docs/workbook/workbook.pdf'>Warehouse app</a> fully built and running in your organization. You can find the tutorial in our workbook.
+2. Have Self-signed certificate installed and have allowed your browser to accept it.
+
+
+
+#####Steps for self-signed certificate and running it locally:
+
+Canvas app needs this server to be using `https`. 
+
+1. First create a self-signed certificate and key by following instructions <a href='https://devcenter.heroku.com/articles/ssl-certificate-self' target='_blank'>here</a> or from anywhere on the internet.
+2. Make sure the .key file's name is `host.key` and is located in `/etc/apache2/ssl/host.key` folder.
+3. Make sure the .crt file's name is `server.crt` and is located in `/etc/apache2/ssl/server.crt` folder.
+4. Run the server using `sudo APP_SECRET="<Your APP Secret>" app.js`
+5. Open browser and go to `https://localhost`.
+6. Browsers will say that the certificate is not trusted, do you want to continue. Press Continue.
+7. Now that you have allowed browser to accept self-signed certificate, you can login to Salesforce and access the app.
+
+<b>Note: Step 6 is a BIG Gotcha. Without forcing browser to accept self-signed certificate, Canvas app simply wont work </b>
+
+
+
+
+
+
+
+
+####Test
+
+1. Install Mocha, expect, chai & should by running npm install
+2. You may want to install Mocha globally by running npm install -g mocha
+3. Simply run mocha in the command line.
 

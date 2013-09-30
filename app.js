@@ -15,7 +15,7 @@ var errors = require('./errors.js');
 // Create a service (the app object is just a callback).
 var app = module.exports = express();
 
-//Set APP_SECRET via environment variable
+//Set API_SECRET via environment variable
 app.APP_SECRET = process.env.APP_SECRET;
 
 app.configure(function() {
@@ -59,7 +59,6 @@ function processSignedRequest(req, res) {
 
 //returns list of invoices based on warehouse context. It first gets list of invoice_ids from line_items 
 // and then later gets invoice details of each of those invoice_ids that are not closed.
-
 function getInvoices(req, res) {
   if (!req.headers.authorization || !req.headers.instance_url) {
     res.json(400, {
@@ -68,45 +67,41 @@ function getInvoices(req, res) {
     return;
   }
 
-  shipment.on('invoices', function(invoices) {
-    res.json(invoices);
-  });
-
-  shipment.on('error', function(err) {
-    res.json(400, err);
+  shipment.on('invoices', function(result) {
+      var data = result.err ? result.err : result.data;
+      res.json(result.statusCode, data);
   });
 
   shipment.getInvoices(req.headers.authorization, req.headers.instance_url, req.headers.warehouse_id);
 }
 
 //Posts to Account Chatter feed and also updates Invoices' status to 'Closed'
-
 function shipInvoice(req, res) {
-  var so = _getShipOptions(req);
+  var so = _getShippingDetails(req);
+  //console.log(so);
   if (!so.authorization || !so.instanceUrl || !so.invAccountId || !so.invoiceName || !so.invoiceId) {
     return res.json(400, {
       'Error': errors.MISSING_REQUIRED_SHIPPING_PARAMETERS
     })
   }
 
-  shipment.on('shipped', function(shipmentData) {
-    res.json(shipmentData);
-  });
 
-  shipment.on('error', function(err) {
-    res.json(400, err);
+  shipment.on('shipped', function(result) {
+      var data = result.err ? result.err : result.data;
+      res.json(result.statusCode, data);
   });
 
   shipment.ship(so);
 }
 
-function _getShipOptions(req) {
+function _getShippingDetails(req) {
   return {
     authorization: req.headers.authorization,
     instanceUrl: req.headers.instance_url,
     invAccountId: req.body.ParentId,
     invoiceName: req.body.Name,
-    invoiceId: req.params.invoiceId
+    invoiceId: req.params.invoiceId,
+    warehouseId: req.headers.warehouse_id /*optional*/
   }
 }
 
