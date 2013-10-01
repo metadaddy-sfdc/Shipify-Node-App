@@ -73,8 +73,8 @@ var mockCreateDelivery = function() {
 }
 
 
-//TESTS...
-describe('Testing POST /ship/:invoiceId End point', function() {
+// //TESTS...
+describe('+ve and -ve Tests for HTTP POST /ship/:invoiceId End point', function() {
 	it('Testing POST /ship/:invoiceId End point ', function(done) {
 		//mock..
 		mockPostShipInvoice();
@@ -96,7 +96,30 @@ describe('Testing POST /ship/:invoiceId End point', function() {
 				done();
 			});
 	});
+
+	it("Shoule throw 'Must Pass WarehouseId to Ship!' when warehouseid is missing", function(done) {
+		//mock..
+		mockPostShipInvoice();
+		mockPostCloseInvoice();
+		mockCreateDelivery();
+
+		request(app).post('/ship/a02R0000000UvETIA0')
+			.set('Authorization', access_token_inside_signed_request)
+			//.set('warehouse_id', warehouse_id)
+			.set('instance_url', instance_url_inside_signed_request)
+			.send({
+				"ParentId": "001R0000001mxHEIAY",
+				"Name": "INV-0054"
+			})
+			.end(function(err, response) {
+				expect(response.statusCode).to.equal(400);
+				expect(response.text).to.contain("Must Pass WarehouseId to Ship!");
+				done();
+			});
+	});	
 });
+
+
 
 describe('Test EventEmitter parallelizm __test', function() {
 
@@ -254,5 +277,16 @@ describe('Testing / End point', function() {
 			expect(body).to.not.contain('https://mobile1.t.salesforce.com');
 			done();
 		});
+	});
+});
+
+
+describe('Test _formatWarehouseId', function() {
+	it('should format WarehouseId', function(done) {
+		var wId = shipment._formatWarehouseId();
+		if (wId) {
+			q += " where Warehouse__C = '" + wId.chars18 + "' OR Warehouse__C = '" + wId.chars15 + "'";
+		}
+		done();
 	});
 });

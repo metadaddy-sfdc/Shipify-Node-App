@@ -173,6 +173,14 @@ Shipment.prototype.closeInvoice = function closeInvoice(so) {
 Shipment.prototype.createDelivery = function createDelivery(so) {
 	var self = this;
 	var authorization = this._formatAuthHeader(so.authorization);
+	var contextId = so.warehouseId;
+	if(!contextId) {
+		var err = new Error("Must Pass WarehouseId to Ship!");
+		err.statusCode = '400';
+		err.err = err.message;
+		this.emit('create-delivery', err);
+		return;
+	}
 	var quickActionBody = {
 		contextId: so.warehouseId.chars15,
 		record: {
