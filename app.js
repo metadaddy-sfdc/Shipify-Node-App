@@ -47,10 +47,17 @@ function dontAllowDirectRequestsToIndex(req, res) {
 
 function processSignedRequest(req, res) {
   console.log('in http post');
-  var shipment = new Shipment();
   try {
     var json = shipment.processSignedRequest(req.body.signed_request, app.APP_SECRET);
-    res.render("index", json);
+    if ("Publisher".equals(req.getContext().getEnvironmentContext().getDisplayLocation())) {
+      res.render("index", json);
+    }
+    else if ("ChatterFeed".equals(req.getContext().getEnvironmentContext().getDisplayLocation())) {
+      res.render("index", json); //change to 
+    }
+    else {
+      res.render("index", json);
+    }
   } catch (e) {
     res.render("error", {
       "error": errors.SIGNED_REQUEST_PARSING_ERROR
