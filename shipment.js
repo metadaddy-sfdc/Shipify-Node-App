@@ -63,6 +63,9 @@ Shipment.prototype.ship = function ship(so) {
 	// Add chatterMsg to shippingObject
 	this._setShipmentChatterMsg(so);
 
+	// Add chatterMsg to shippingObject
+	this._setInvoiceChatterMsg(so);
+
 	// add 18 & 15 chars warehouseId to SO
 	so.warehouseId = this._formatWarehouseId(so.warehouseId);
 
@@ -85,10 +88,42 @@ Shipment.prototype.ship = function ship(so) {
 		}
 	});
 
-	//Listen to 'create-delivery' event and (finally) emit 'shipped'.
+	//Listen to 'create-delivery' event and call chatterInvoice
+
+	/*
+	* For canvas in the chatter feed comment this out
+	*
 	this.once('create-delivery', function(response) {
+		if (response.err) {
+			self.emit('shipped', response);
+		} else {
+			self.chatterInvoice(so);
+		}
+	});
+	*
+	*For canvas in the chatter feed comment this out
+	*/
+
+
+	/*
+	* For canvas in the chatter feed uncomment this
+	*/
+	//Listen to 'create-delivery' event and call chatterInvoice
+	this.once('create-delivery', function(response) {
+		if (response.err) {
+			self.emit('shipped', response);
+		} else {
+			self.chatterInvoice(so);
+		}
+	});
+
+	//Listen to 'chatter-invoice' event and (finally) emit 'shipped'.
+	this.once('chatter-invoice', function(response) {
 		self.emit('shipped', response);
 	});
+	/*
+	* For canvas in the chatter feed uncomment this
+	*/
 
 	this.addShippingInfoToAccountChatter(so);
 };
@@ -148,6 +183,28 @@ Shipment.prototype.addShippingInfoToAccountChatter = function addShippingInfoToA
 	request(reqOptions, this.handleAJAXResponse('add-shipping-info-to-account-chatter', so));
 }
 
+Shipment.prototype.chatterInvoice = function chatterInvoice(so) {
+	var body = {
+		ParentId: so.invoiceId,
+		Body: so.invChatterMsg
+	}
+
+	var authorization = this._formatAuthHeader(so.authorization);
+
+	var reqOptions = {
+		url: so.instanceUrl + '/services/data/v28.0/sobjects/FeedItem/',
+		method: 'POST',
+		headers: {
+			'Authorization': authorization,
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(body)
+	};
+
+	//make ajax request and emit 'chatter-invoice with result data or error back to listner.
+	request(reqOptions, this.handleAJAXResponse('chatter-invoice', so));
+}
+
 Shipment.prototype.closeInvoice = function closeInvoice(so) {
 	var authorization = this._formatAuthHeader(so.authorization);
 
@@ -183,7 +240,7 @@ Shipment.prototype.createDelivery = function createDelivery(so) {
 	};
 
 	var deliveryReq = {
-		url: so.instanceUrl + '/services/data/v28.0/sobjects/Warehouse__c/quickActions/Create_Delivery/',
+		url: so.instanceUrl + '/services/data/v28.0/sobjects/Invoice__c/quickActions/Create_Delivery/',
 		method: 'POST',
 		headers: {
 			'Authorization': authorization,
@@ -228,6 +285,27 @@ Shipment.prototype.handleAJAXResponse = function(successEventName, so) {
 
 Shipment.prototype._setShipmentChatterMsg = function _setShipmentChatterMsg(so) {
 	so.chatterMsg = "Invoice: " + so.invoiceName + " has been shipped! Your order number is #" + so.orderNumber + " " + so.instanceUrl + "/" + so.invoiceId
+};
+
+Shipment.prototype._setInvoiceChatterMsg = function _setInvoiceChatterMsg(so) {
+	so.invChatterMsg = {
+	    "body" : {
+	      "messageSegments" : [ {
+	        "type" : "Text",
+	        "text" : "Please Approve my trip: Release Planning at HQ"
+	      } ]
+	    },
+	    "attachment" : {
+	      "description" : "This is a shipment status for your delivery.",
+	      "parameters" : "{&quot;order&quot;:&quot;"+so.orderNumber+"&quot;}",
+	      "title" : "Shipment Status",
+	      "namespacePrefix" : "",
+	      "developerName" : "ShipmentMonday", /* This needs to be the API Name of your Connected App */
+	      "height" : "100px",
+	      "thumbnailUrl" : "https://cdn1.iconfinder.com/data/icons/VISTA/project_managment/png/48/deliverables.png",
+	      "attachmentType" : "Canvas"
+	    }
+	}
 };
 
 Shipment.prototype._setOrderNumber = function _setOrderNumber(so) {
