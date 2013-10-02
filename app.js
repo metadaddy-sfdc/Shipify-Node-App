@@ -7,7 +7,7 @@ var ejs = require('ejs');
 
 var request = require('request');
 var os = require("os");
-var shipment = require('./shipment.js');
+var Shipment = require('./shipment.js');
 var errors = require('./errors.js');
 
 
@@ -47,17 +47,10 @@ function dontAllowDirectRequestsToIndex(req, res) {
 
 function processSignedRequest(req, res) {
   console.log('in http post');
+  var shipment = new Shipment();
   try {
     var json = shipment.processSignedRequest(req.body.signed_request, app.APP_SECRET);
-    if ("Publisher".equals(req.getContext().getEnvironmentContext().getDisplayLocation())) {
-      res.render("index", json);
-    }
-    else if ("ChatterFeed".equals(req.getContext().getEnvironmentContext().getDisplayLocation())) {
-      res.render("index", json); //change to 
-    }
-    else {
-      res.render("index", json);
-    }
+    res.render("index", json);
   } catch (e) {
     res.render("error", {
       "error": errors.SIGNED_REQUEST_PARSING_ERROR
@@ -74,7 +67,7 @@ function getInvoices(req, res) {
     });
     return;
   }
-
+  var shipment = new Shipment();
   shipment.on('invoices', function(result) {
       var data = result.err ? result.err : result.data;
       res.json(result.statusCode, data);
@@ -85,6 +78,7 @@ function getInvoices(req, res) {
 
 //Posts to Account Chatter feed and also updates Invoices' status to 'Closed'
 function shipInvoice(req, res) {
+  var shipment = new Shipment();
   var so = _getShippingDetails(req);
   //console.log(so);
   if (!so.authorization || !so.instanceUrl || !so.invAccountId || !so.invoiceName || !so.invoiceId) {

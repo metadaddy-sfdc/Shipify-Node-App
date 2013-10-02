@@ -63,9 +63,6 @@ Shipment.prototype.ship = function ship(so) {
 	// Add chatterMsg to shippingObject
 	this._setShipmentChatterMsg(so);
 
-	// Add chatterMsg to shippingObject
-	this._setInvoiceChatterMsg(so);
-
 	// add 18 & 15 chars warehouseId to SO
 	so.warehouseId = this._formatWarehouseId(so.warehouseId);
 
@@ -88,42 +85,10 @@ Shipment.prototype.ship = function ship(so) {
 		}
 	});
 
-	//Listen to 'create-delivery' event and call chatterInvoice
-
-	/*
-	* For canvas in the chatter feed comment this out
-	*
+	//Listen to 'create-delivery' event and (finally) emit 'shipped'.
 	this.once('create-delivery', function(response) {
-		if (response.err) {
-			self.emit('shipped', response);
-		} else {
-			self.chatterInvoice(so);
-		}
-	});
-	*
-	*For canvas in the chatter feed comment this out
-	*/
-
-
-	/*
-	* For canvas in the chatter feed uncomment this
-	*/
-	//Listen to 'create-delivery' event and call chatterInvoice
-	this.once('create-delivery', function(response) {
-		if (response.err) {
-			self.emit('shipped', response);
-		} else {
-			self.chatterInvoice(so);
-		}
-	});
-
-	//Listen to 'chatter-invoice' event and (finally) emit 'shipped'.
-	this.once('chatter-invoice', function(response) {
 		self.emit('shipped', response);
 	});
-	/*
-	* For canvas in the chatter feed uncomment this
-	*/
 
 	this.addShippingInfoToAccountChatter(so);
 };
@@ -183,28 +148,6 @@ Shipment.prototype.addShippingInfoToAccountChatter = function addShippingInfoToA
 	request(reqOptions, this.handleAJAXResponse('add-shipping-info-to-account-chatter', so));
 }
 
-Shipment.prototype.chatterInvoice = function chatterInvoice(so) {
-	var body = {
-		ParentId: so.invoiceId,
-		Body: so.invChatterMsg
-	}
-
-	var authorization = this._formatAuthHeader(so.authorization);
-
-	var reqOptions = {
-		url: so.instanceUrl + '/services/data/v28.0/sobjects/FeedItem/',
-		method: 'POST',
-		headers: {
-			'Authorization': authorization,
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(body)
-	};
-
-	//make ajax request and emit 'chatter-invoice with result data or error back to listner.
-	request(reqOptions, this.handleAJAXResponse('chatter-invoice', so));
-}
-
 Shipment.prototype.closeInvoice = function closeInvoice(so) {
 	var authorization = this._formatAuthHeader(so.authorization);
 
@@ -230,17 +173,24 @@ Shipment.prototype.closeInvoice = function closeInvoice(so) {
 Shipment.prototype.createDelivery = function createDelivery(so) {
 	var self = this;
 	var authorization = this._formatAuthHeader(so.authorization);
+	var contextId = so.warehouseId;
+	if(!contextId) {
+		var err = new Error("Must Pass WarehouseId to Ship!");
+		err.statusCode = '400';
+		err.err = err.message;
+		this.emit('create-delivery', err);
+		return;
+	}
 	var quickActionBody = {
 		contextId: so.warehouseId.chars15,
 		record: {
 			Invoice__c: so.invoiceId,
-			Order_Number__c: so.orderNumber,
-			Warehouse__c: so.warehouseId
+			Order_Number__c: so.orderNumber
 		}
 	};
 
 	var deliveryReq = {
-		url: so.instanceUrl + '/services/data/v28.0/sobjects/Invoice__c/quickActions/Create_Delivery/',
+		url: so.instanceUrl + '/services/data/v28.0/sobjects/Warehouse__c/quickActions/Create_Delivery/',
 		method: 'POST',
 		headers: {
 			'Authorization': authorization,
@@ -287,29 +237,8 @@ Shipment.prototype._setShipmentChatterMsg = function _setShipmentChatterMsg(so) 
 	so.chatterMsg = "Invoice: " + so.invoiceName + " has been shipped! Your order number is #" + so.orderNumber + " " + so.instanceUrl + "/" + so.invoiceId
 };
 
-Shipment.prototype._setInvoiceChatterMsg = function _setInvoiceChatterMsg(so) {
-	so.invChatterMsg = {
-	    "body" : {
-	      "messageSegments" : [ {
-	        "type" : "Text",
-	        "text" : "Please Approve my trip: Release Planning at HQ"
-	      } ]
-	    },
-	    "attachment" : {
-	      "description" : "This is a shipment status for your delivery.",
-	      "parameters" : "{&quot;order&quot;:&quot;"+so.orderNumber+"&quot;}",
-	      "title" : "Shipment Status",
-	      "namespacePrefix" : "",
-	      "developerName" : "ShipmentMonday", /* This needs to be the API Name of your Connected App */
-	      "height" : "100px",
-	      "thumbnailUrl" : "https://cdn1.iconfinder.com/data/icons/VISTA/project_managment/png/48/deliverables.png",
-	      "attachmentType" : "Canvas"
-	    }
-	}
-};
-
 Shipment.prototype._setOrderNumber = function _setOrderNumber(so) {
-	so.orderNumber = Math.floor(Math.random() * 90000) + 10000;;
+	so.orderNumber = Math.floor(Math.random() * 90000) + 10000;
 };
 
 //Validates and returns either null, OR, {chars18: First_18_chars_of_warehouseId, chars15: First_15_chars_of_warehouseId}
@@ -320,7 +249,7 @@ Shipment.prototype._formatWarehouseId = function _formatWarehouseId(warehouseId)
 			chars15: warehouseId.substr(0, 15)
 		}
 	}
-}
+};
 
 Shipment.prototype._getIdsWhereClause = function _getIdsWhereClause(invoices) {
 	var items = invoices.records;
@@ -335,11 +264,20 @@ Shipment.prototype._getIdsWhereClause = function _getIdsWhereClause(invoices) {
 		}
 	}
 	return "(" + ids.join(' OR ') + ")";
-}
+};
 
 Shipment.prototype._formatAuthHeader = function _formatAuthHeader(header) {
 	var h = header.toLowerCase(header);
 	return h.indexOf('oauth ') == 0 ? header : 'OAuth ' + header;
-}
+};
 
-exports = module.exports = new Shipment();
+
+Shipment.prototype.__test = function __test(count) {
+	var self = this;
+	setTimeout(function() {
+		self.emit('__test', count);
+	}, 1);
+};
+
+
+exports = module.exports = Shipment;
