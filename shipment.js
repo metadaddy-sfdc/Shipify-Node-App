@@ -84,7 +84,9 @@ Shipment.prototype.ship = function ship(so) {
 		if (response.err) {
 			self.emit('shipped', response);
 		} else {
-			self.createDelivery(so);
+			//self.createDelivery(so); add back in laterrrrrr
+
+			self.chatterInvoice(so);
 		}
 	});
 
@@ -108,13 +110,13 @@ Shipment.prototype.ship = function ship(so) {
 	* For canvas in the chatter feed uncomment this
 	*/
 	//Listen to 'create-delivery' event and call chatterInvoice
-	this.once('create-delivery', function(response) {
+	/*this.once('create-delivery', function(response) {
 		if (response.err) {
 			self.emit('shipped', response);
 		} else {
 			self.chatterInvoice(so);
 		}
-	});
+	});*/ /****** add back in later ******/
 
 	//Listen to 'chatter-invoice' event and (finally) emit 'shipped'.
 	this.once('chatter-invoice', function(response) {
