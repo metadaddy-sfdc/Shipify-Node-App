@@ -294,7 +294,7 @@ Shipment.prototype._setShipmentChatterMsg = function _setShipmentChatterMsg(so) 
 };
 
 Shipment.prototype._setInvoiceChatterMsg = function _setInvoiceChatterMsg(so) {
-	so.invChatterMsg = {
+	var msg = {
 	    "body" : {
 	      "messageSegments" : [ {
 	        "type" : "Text",
@@ -311,7 +311,9 @@ Shipment.prototype._setInvoiceChatterMsg = function _setInvoiceChatterMsg(so) {
 	      "thumbnailUrl" : "https://cdn1.iconfinder.com/data/icons/VISTA/project_managment/png/48/deliverables.png",
 	      "attachmentType" : "Canvas"
 	    }
-	}
+	};
+
+	so.invChatterMsg = JSON.stringify(msg);
 };
 
 Shipment.prototype._setOrderNumber = function _setOrderNumber(so) {
