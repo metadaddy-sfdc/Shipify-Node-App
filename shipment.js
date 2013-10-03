@@ -2,20 +2,22 @@ var decode = require('salesforce-signed-request');
 var errors = require('./errors.js');
 var events = require('events');
 var util = require('util');
-var request = require('request')
+var request = require('request');
+var shipmentPost = require('./shipementPost.js');
 
-	function Shipment() {
-		events.EventEmitter.call(this);
-	}
+function Shipment() {
+	events.EventEmitter.call(this);
+}
 
 util.inherits(Shipment, events.EventEmitter);
 
 Shipment.prototype.processSignedRequest = function processSignedRequest(signedRequest, APP_SECRET) {
 	var sfContext = decode(signedRequest, APP_SECRET);
 	return {
+		sRequest: sfContext,
 		oauthToken: sfContext.client.oauthToken,
 		instanceUrl: sfContext.client.instanceUrl,
-		warehouseId: sfContext.context.environment.parameters.id //sent as parameters via visualForce parameters
+		warehouseId: sfContext.context.environment.parameters.id //sent as parameters via Visualforce parameters
 	}
 };
 
@@ -84,9 +86,7 @@ Shipment.prototype.ship = function ship(so) {
 		if (response.err) {
 			self.emit('shipped', response);
 		} else {
-			//self.createDelivery(so); add back in laterrrrrr
-
-			self.chatterInvoice(so);
+			self.createDelivery(so);
 		}
 	});
 
@@ -119,7 +119,11 @@ Shipment.prototype.ship = function ship(so) {
 	});*/ /****** add back in later ******/
 
 	//Listen to 'chatter-invoice' event and (finally) emit 'shipped'.
-	this.once('chatter-invoice', function(response) {
+	this.once('create-delivery', function(response) {
+		// @review - generate named methods instead (fireEnable())
+        console.log("Fire event from client");
+        Sfdc.Canvas.client.publish(sRequest.client, {name : 'publisher.setValidForSubmit', payload : true}); //is SFDC.Canvas ok here?
+
 		self.emit('shipped', response);
 	});
 	/*

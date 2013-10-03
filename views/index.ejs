@@ -5,6 +5,7 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
 		<script src="/stylesheets/Mobile-Design-Templates-master/common/js/jquery.touchwipe.min.js" type="text/javascript" ></script>
 		<script src="/stylesheets/Mobile-Design-Templates-master/common/js/main.min.js" type="text/javascript" ></script>
+		<script type="text/javascript" src="./sdk/js/canvas-all.js"></script>
 		
 		<style>
           /* default S1 color styles */
@@ -73,13 +74,22 @@
 		var access_token = '<%= oauthToken %>';
 		var instance_url = '<%= instanceUrl %>';
 		var warehouseId = '<%= warehouseId %>';
+		var sRequest = '<%= sRequest %>';
 
 		$(document).ready(function(){
-          if(access_token == '' || instance_url == '' || warehouseId == '') {
+          if(access_token == '' || instance_url == '' || warehouseId == '' || sRequest = '') {
           	alert('First make HTTP POST to "/" w/ Salesforce signed-request. HTTP GET to  "/" is not allowed');
           	return;
           }
-            getInvoices();
+          
+          getInvoices();
+        });
+
+        Sfdc.canvas(function() {
+            var module = shipmentPost.instance(sRequest);
+            Sfdc.canvas.client.subscribe(sRequest.client, module.subscriptions);
+            Sfdc.canvas.client.resize(sRequest.client, {height : "225px"});
+            console.log("Canvas Done....");
         });
 
 		function getInvoices() {
