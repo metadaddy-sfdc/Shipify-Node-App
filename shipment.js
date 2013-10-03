@@ -300,7 +300,8 @@ Shipment.prototype._setShipmentChatterMsg = function _setShipmentChatterMsg(so) 
 };
 
 Shipment.prototype._setInvoiceChatterMsg = function _setInvoiceChatterMsg(so) {
-	so.invChatterMsg = {{
+	so.invChatterMsg = {
+		"body": {
 	      "messageSegments" : [ {
 	        "type" : "Text",
 	        "text" : "Status for Order #"+so.orderNumber
