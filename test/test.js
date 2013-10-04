@@ -68,13 +68,13 @@ var mockCreateDelivery = function() {
 		.filteringRequestBody(function(path) {
 			return '*';
 		})
-		.post("/services/data/v28.0/sobjects/Warehouse__c/quickActions/Create_Delivery/", '*')
+		.post("/services/data/v28.0/sobjects/Invoice__c/quickActions/Create_Delivery/", '*')
 		.reply(201, test_data.createDeliveryResult);
 }
 
 
 // //TESTS...
-describe('+ve and -ve Tests for HTTP POST /ship/:invoiceId End point', function() {
+describe('+ve and -ve Tests for HTTP POST /ship/:invoiceId End point -->', function() {
 	it('Testing POST /ship/:invoiceId End point ', function(done) {
 		//mock..
 		mockPostShipInvoice();
@@ -96,32 +96,11 @@ describe('+ve and -ve Tests for HTTP POST /ship/:invoiceId End point', function(
 				done();
 			});
 	});
-
-	it("Shoule throw 'Must Pass WarehouseId to Ship!' when warehouseid is missing", function(done) {
-		//mock..
-		mockPostShipInvoice();
-		mockPostCloseInvoice();
-		mockCreateDelivery();
-
-		request(app).post('/ship/a02R0000000UvETIA0')
-			.set('Authorization', access_token_inside_signed_request)
-			//.set('warehouse_id', warehouse_id)
-			.set('instance_url', instance_url_inside_signed_request)
-			.send({
-				"ParentId": "001R0000001mxHEIAY",
-				"Name": "INV-0054"
-			})
-			.end(function(err, response) {
-				expect(response.statusCode).to.equal(400);
-				expect(response.text).to.contain("Must Pass WarehouseId to Ship!");
-				done();
-			});
-	});	
 });
 
 
 
-describe('Test EventEmitter parallelizm __test', function() {
+describe('Test EventEmitter parallelizm __test -->', function() {
 
 	it('should call __test binding 100 times if we QUICKLY call a method (that triggers an event) 10 times use Shipment obj as singleton', function(done) {
 		var singletonShipmentCallCnt = 0;
@@ -180,7 +159,7 @@ describe('Test EventEmitter parallelizm __test', function() {
 	});	
 
 });
-describe('Testing GET /invoices End point', function() {
+describe('Testing GET /invoices End point -->', function() {
 	it('Should return invoices when valid requests are made to /invoices ', function(done) {
 		//mock..
 		mockGetLineItemsWithWarehouseId();
@@ -221,7 +200,7 @@ describe('Testing GET /invoices End point', function() {
 
 });
 
-describe('Testing /signedrequest End point', function() {
+describe('Testing /signedrequest End point --> ', function() {
 	it('Should have access_token and instance_url in index.html for valid HTTP POST to /signedrequest', function(done) {
 		request(app).post('/signedrequest').
 		send({
@@ -252,7 +231,7 @@ describe('Testing /signedrequest End point', function() {
 	});
 });
 
-describe('Testing / End point', function() {
+describe('Testing / End point -->', function() {
 	it('Should have not allow HTTP GET to / ', function(done) {
 		request(app).get('/').
 		send().end(function(err, response) {
@@ -265,7 +244,7 @@ describe('Testing / End point', function() {
 		});
 	});
 
-	it('Should have not allow HTTP POST to / ', function(done) {
+	it('Should have not allow HTTP POST to /', function(done) {
 		request(app).post('/').
 		send({
 			"signed_request": "invalid_signed_request",
@@ -281,7 +260,7 @@ describe('Testing / End point', function() {
 });
 
 
-describe('Test _formatWarehouseId', function() {
+describe('Test _formatWarehouseId  -->', function() {
 	it('should format WarehouseId', function(done) {
 		var wId = shipment._formatWarehouseId();
 		if (wId) {
