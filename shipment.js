@@ -12,6 +12,7 @@ util.inherits(Shipment, events.EventEmitter);
 
 Shipment.prototype.processSignedRequest = function processSignedRequest(signedRequest, APP_SECRET) {
 	var sfContext = decode(signedRequest, APP_SECRET);
+	//console.log(sfContext);
 	return {
 		oauthToken: sfContext.client.oauthToken,
 		instanceUrl: sfContext.client.instanceUrl,
@@ -173,24 +174,22 @@ Shipment.prototype.closeInvoice = function closeInvoice(so) {
 Shipment.prototype.createDelivery = function createDelivery(so) {
 	var self = this;
 	var authorization = this._formatAuthHeader(so.authorization);
-	var contextId = so.warehouseId;
-	if(!contextId) {
-		var err = new Error("Must Pass WarehouseId to Ship!");
+	if(!so.invoiceId) {
+		var err = new Error("Must Pass InvoiceId to Ship!");
 		err.statusCode = '400';
 		err.err = err.message;
 		this.emit('create-delivery', err);
 		return;
 	}
 	var quickActionBody = {
-		contextId: so.warehouseId.chars15,
+		contextId: so.invoiceId,
 		record: {
-			Invoice__c: so.invoiceId,
 			Order_Number__c: so.orderNumber
 		}
 	};
 
 	var deliveryReq = {
-		url: so.instanceUrl + '/services/data/v28.0/sobjects/Warehouse__c/quickActions/Create_Delivery/',
+		url: so.instanceUrl + '/services/data/v28.0/sobjects/Invoice__c/quickActions/Create_Delivery/',
 		method: 'POST',
 		headers: {
 			'Authorization': authorization,
