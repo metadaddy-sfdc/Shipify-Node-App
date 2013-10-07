@@ -3,9 +3,10 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var should = require('chai').should();
 var app = require('../app');
-var errors = require('../errors.js');
+var errors = require('../lib/errors.js');
+var config = require('../lib/config.js');
 
-var Shipment = require('../shipment.js');
+var Shipment = require('../lib/shipment.js');
 var shipment;
 
 beforeEach(function(done) {
@@ -20,8 +21,7 @@ var access_token_inside_signed_request = '00DR00000008bPC!AQ8AQPUHPkLJSPGCVJXf0N
 var instance_url_inside_signed_request = 'https://mobile1.t.salesforce.com';
 var warehouse_id = "a00R0000000iMYJIA2";
 
-app.APP_SECRET = "6375554712652875436";
-"https://mobile1.t.salesforce.com/services/data/v28.0/query?q=SELECT Invoice__c From Line_Item__C where Warehouse__C = 'a00R0000000iMYJIA2' OR Warehouse__C = 'a00R0000000iMYJ'";
+config.APP_SECRET = "6375554712652875436";
 
 
 
@@ -73,7 +73,7 @@ var mockCreateDelivery = function() {
 }
 
 
-// //TESTS...
+//TESTS...
 describe('+ve and -ve Tests for HTTP POST /ship/:invoiceId End point -->', function() {
 	it('Testing POST /ship/:invoiceId End point ', function(done) {
 		//mock..
