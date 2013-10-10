@@ -233,7 +233,7 @@ Shipment.prototype.handleAJAXResponse = function(successEventName, so) {
 };
 
 Shipment.prototype._setShipmentChatterMsg = function _setShipmentChatterMsg(so) {
-	so.chatterMsg = "Invoice: " + so.invoiceName + " has been shipped! Your order number is #" + so.orderNumber + " " + so.instanceUrl + "/" + so.invoiceId
+	so.chatterMsg = "Invoice: " + so.invoiceName + " has been shipped! Your order number is #" + so.orderNumber + " " + so.instanceUrl + "/" + so.invoiceId + " please click cancel to close this screen."
 };
 
 Shipment.prototype._setOrderNumber = function _setOrderNumber(so) {

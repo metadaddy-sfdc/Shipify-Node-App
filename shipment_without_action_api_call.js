@@ -9,6 +9,7 @@ var request = require('request')
 	}
 util.inherits(Shipment, events.EventEmitter);
 
+/* this verifies and decodes the signed request */
 Shipment.prototype.processSignedRequest = function processSignedRequest(signedRequest, APP_SECRET) {
 	var sfContext = decode(signedRequest, APP_SECRET);
 	return {
@@ -19,13 +20,17 @@ Shipment.prototype.processSignedRequest = function processSignedRequest(signedRe
 };
 
 Shipment.prototype.getInvoices = function getInvoices(authorization, instanceUrl, warehouseId) {
+	// Start building query on all invoices
 	var q = 'SELECT Invoice__c From Line_Item__C';
 
+	/* if a parameter is specified with the warehouse id from a VF page, this will grab that warehouseId and filter the list of line items
+	* to only show line items related to merchandise from that particular warehouse */
 	if (warehouseId && warehouseId != 'undefined' && warehouseId != '' && (warehouseId.length == 15 || warehouseId.length == 18)) {
 		var warehouseId15Chars = warehouseId.substr(0, 15);
 		q += " where Warehouse__C = '" + warehouseId + "' OR Warehouse__C = '" + warehouseId15Chars + "'";
 	}
 
+	//this starts building the REST call to query for the list of line items
 	var reqOptions = {
 		url: instanceUrl + '/services/data/v28.0/query?q=' + q,
 		headers: {
@@ -38,13 +43,17 @@ Shipment.prototype.getInvoices = function getInvoices(authorization, instanceUrl
 		if (err) {
 			return self.emit('error', err);
 		}
+		//once the request returns a response it sends the body to query for invoices based off of the Invoice id's related to these line items
 		self._getInvoicesFromIds(authorization, instanceUrl, JSON.parse(body));
 	});
 };
 
 Shipment.prototype._getInvoicesFromIds = function getInvoicesFromIds(authorization, instanceUrl, invoices) {
+	//_getIdsWhereClause stores the Ids to a list var that contains a bunch of Invoice id's
 	var idsClause = this._getIdsWhereClause(invoices);
-	var q = "SELECT Id, Name, Account__c, Account__r.Name, Invoice_Total__c, Status__c FROM Invoice__c Where Status__c !='Closed' AND " + idsClause;
+
+	//this query will grab all open invoices and if is part of the invoices related to merchandise in the warehouse specified
+	var q = "SELECT Id, Name, Account__c, Account__r.Name, Invoice_Total__c, Status__c FROM Invoice__c Where Status__c !='Closed' " + idsClause;
 
 	var authorization = this._formatAuthHeader(authorization);
 	var reqOptions = {
@@ -71,6 +80,7 @@ Shipment.prototype._getInvoicesFromIds = function getInvoicesFromIds(authorizati
 //     invoiceId: req.params.invoiceId
 //   }
 Shipment.prototype.ship = function ship(so) {
+	/* once the app is told to ship, it creates a post to post to the Account chatter feed */
 	var body = {
 		ParentId: so.invAccountId,
 		Body: this._getShipmentChatterMsg(so)
@@ -92,6 +102,7 @@ Shipment.prototype.ship = function ship(so) {
 	request(reqOptions, function(err, response, body) {
 		var statusCode = response.statusCode;
 		if (!err && (statusCode == 200 || statusCode == 201)) {
+			// if the chatter post goes through without an error, Shipify then closes the invoice
 			self._closeInvoice(so);
 		} else {
 			self.emit('error', err);
@@ -118,6 +129,7 @@ Shipment.prototype._closeInvoice = function _closeInvoice(so) {
 	request(reqOptions, function(err, response, body) {
 		var statusCode = response.statusCode;
 		if (!err && (statusCode == 200 || statusCode == 204)) {
+			//if the invoice status changes to closed without an error, Shipify notifies the end user it is shipped
 			self.emit('shipped', {
 				'result': 'OK'
 			});
@@ -130,7 +142,7 @@ Shipment.prototype._closeInvoice = function _closeInvoice(so) {
 Shipment.prototype._getShipmentChatterMsg = function _getShipmentChatterMsg(so) {
 	// This is a randomly generated number, but in reality would be a real number grabbed from this back end system 
 	var orderNumber = Math.floor(Math.random() * 90000) + 10000;
-	return "Invoice: " + so.invoiceName + " has been shipped! Your order number is #" + orderNumber + " " + so.instanceUrl + "/" + so.invoiceId
+	return "Invoice: " + so.invoiceName + " has been shipped! Your order number is #" + orderNumber + " " + so.instanceUrl + "/" + so.invoiceId + " please click cancel to close this screen."
 }
 
 Shipment.prototype._getIdsWhereClause = function _getIdsWhereClause(invoices) {
@@ -145,7 +157,12 @@ Shipment.prototype._getIdsWhereClause = function _getIdsWhereClause(invoices) {
 			ids.push(formattedId);
 		}
 	}
-	return "(" + ids.join(' OR ') + ")";
+	/*********/
+	if(ids.length > 0){
+		return "AND (" + ids.join(' OR ') + ")";
+	} else {
+		return '';
+	}
 }
 
 Shipment.prototype._formatAuthHeader = function _formatAuthHeader(header) {

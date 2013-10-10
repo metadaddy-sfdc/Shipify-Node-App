@@ -142,7 +142,7 @@ Shipment.prototype._closeInvoice = function _closeInvoice(so) {
 Shipment.prototype._getShipmentChatterMsg = function _getShipmentChatterMsg(so) {
 	// This is a randomly generated number, but in reality would be a real number grabbed from this back end system 
 	var orderNumber = Math.floor(Math.random() * 90000) + 10000;
-	return "Invoice: " + so.invoiceName + " has been shipped! Your order number is #" + orderNumber + " " + so.instanceUrl + "/" + so.invoiceId
+	return "Invoice: " + so.invoiceName + " has been shipped! Your order number is #" + orderNumber + " " + so.instanceUrl + "/" + so.invoiceId + " please click cancel to close this screen."
 }
 
 Shipment.prototype._getIdsWhereClause = function _getIdsWhereClause(invoices) {
