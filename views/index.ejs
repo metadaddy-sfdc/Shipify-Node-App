@@ -39,8 +39,8 @@
           <section class="data-capture-buttons one-buttons">
               <div class="content">
                   <section class="data-capture-buttons one-buttons">
-                      <a href="#" id="shipIt" onClick="ship()" style="text-transform:none;" >Ship It</a>
-                      <a href='javascript:void(0)' onclick='getInvoices();'>Go Back</a>	
+                      <a href="#" id="shipIt" onClick="ship()" style="text-transform:none;" >Ship It</a><br/>
+                      <a href="javascript:void(0)" onclick="getInvoices();" tyle="text-transform:none;" >Go Back</a>	
                   </section>
                </div>
           </section>
@@ -56,10 +56,6 @@
           </section>
 
       </div> <!-- end shipped -->
-
-
-
-
 
 		<script type="text/javascript">
 		var invoice_id;
@@ -93,7 +89,8 @@
 					'warehouse_id': warehouseId
 				}
 			}).done(function(data, textStatus, jqXHR) {
-				$("#openInvoices").empty();  
+				$("#openInvoices").empty(); 
+				//this builds a list of invoices for the initial list screen
 		        $.each(data.records , function(){
 		            var invTotal = this.Invoice_Total__c;
 		            var invId = this.Id;
@@ -106,6 +103,7 @@
 		                         +'</strong>&nbsp;('+invName+')</p><div class="list-view-icons"><span class="icon-right-arrow">'
 		                         +'&nbsp;</span></div></a>');
 
+		            //this maps fields for the following page detail when an invoice is clicked
 		            newLink.click(function(e) {
 		                 e.preventDefault();
 		                 $("#accName").text(accName);
@@ -127,6 +125,7 @@
 			})
 		}
 
+		//this creates AJAX posts that will invoke methods from shipment.js
 		function ship() {
 			$.ajax({
 				type: 'POST',
@@ -142,7 +141,7 @@
 				}
 			}).done(function(data, textStatus, jqXHR) {
 				//$('#invoices').html(JSON.stringify(data));
-				$("#confirmMsg").text(invoice_name + " is now closed");
+				$("#confirmMsg").text(invoice_name + " is now closed. Please click cancel to close this screen.);
 				$('#shipInvoicePage').hide();
 				$('#shipped').show();
 			}).fail(function(jqXHR, textStatus, errorThrown) {
