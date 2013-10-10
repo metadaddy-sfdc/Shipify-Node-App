@@ -6,25 +6,25 @@
 [![Build Status](https://travis-ci.org/rajaraodv/shipment.png?branch=master)](https://travis-ci.org/rajaraodv/shipment)
 
 ## About
-This is a proof of concept shipment fulfillment app that shows how to tightly integrate a 3rd party app like this one, into Salesforce using <b>Salesforce Canvas</b> technology.
+This is a proof of concept shipment fulfillment app that shows how to tightly integrate a 3rd party app like this one into Salesforce using <b>Force.com Canvas</b>.
 
 ## How it Works
 On its own it performs 2 tasks:
 
-1. Displays list of `open Invoice` items. 
-2. And allows a Salesforce user to 'ship' an invoice. i.e. Marks the invoice as `closed` and also posts a message to that invoice's Account chatter feed indicating that the Invoice has been shipped.
+1. Displays list of `Open Invoice` items. 
+2. Allows a Salesforce user to 'Ship' an invoice. i.e. Marks the invoice as `Closed` and also posts a message to that invoice's sccount Chatter feed which indicates that the Invoice has been shipped.
 
-## The problem
+## How to set it up
 While the app is fine, the user still has to:
 
-1. Open this app in a different browser tab even though he is in Salesforce in another tab.
-2. Login via OAuth 
-3. Filter invoices by Warehouse because no context as this app doesn't know where in Salesforce the user is currently in.
-4. And finally, select an Invoice and ship it.
+1. Log in to Salesforce
+2. Create a Connected App in Salesforce with this apps URL (on Heroku or elsewhere) and add APP_SECRET (Consumer Secret) and RUNNING_ON_HEROKU (true or false) as env vars
+3. Create 'Open' (picklist field) invoice records
+4. Add Canvas into a global publisher action to Ship Invoices
 
 
-## The Solution
-Salesforce Canvas technology allows us to pass Salesforce user information and access_token in an encrypted string called: `signed_request`. Further, Canvas also allows embedding third party apps as 'tabs', 'links', 'buttons' etc at various location inside Salesforce.
+## Tell me more
+Force.com Canvas allows us to pass Salesforce user information and access_token in an encrypted string called: `signed_request`. Further, Canvas also allows embedding third party apps as 'tabs', 'links', 'buttons' etc at various location inside Salesforce.
 
 
 #### Picture of highly contextual 'Ship It' button
@@ -40,7 +40,7 @@ Salesforce Canvas technology allows us to pass Salesforce user information and a
 (click to enlarge)
 
 
-## Converting our app to a Salesforce Canvas app
+## Converting our app to a Force.com Canvas app
 
 To take advantage of Canvas, we need to do the following:
 
@@ -90,7 +90,7 @@ To go one step further, let's contextually embed this app as a button (say 'Ship
 ```
 <img src="https://raw.github.com/rajaraodv/shipment/master/images/visualforcepage-canvas-wrapper.png" height="400" width="700px" /> 
 <br>
-2.Open `[Admin Name] > Setup > Create > Objects` and open up the custom object. In our case, `warehouse` object. 
+2.Open `[Admin Name] > Setup > Create > Objects` and open up the custom object. In our case, `Warehouse` object. 
 
 3.Then under `"Buttons, Links, and Actions" > New`, create an action button called `Ship It` that opens up the Visualforce page we had created earlier in Step 1.
 <img src="https://raw.github.com/rajaraodv/shipment/master/images/ship-it-button-code.png" height="400" width="700px" /> 
@@ -126,8 +126,8 @@ app.get('/signedrequest', dontAllowDirectRequestsToIndex);
 
 Pre-requisites:
 
-1. Have the <a href='http://www.salesforce.com/us/developer/docs/workbook/workbook.pdf'>Warehouse app</a> fully built and running in your organization. You can find the tutorial in our workbook.
-2. Have Self-signed certificate installed and have allowed your browser to accept it.
+1. Have the <a href='http://www.salesforce.com/us/developer/docs/workbook/workbook.pdf'>Warehouse app</a> fully built and running in your organization. You can find the tutorial in our workbook. In addition, you need to create a lookup field on Merchandise to a new custom object Warehouse__c. Finally, create a lookup relationship on Invoice__c to the standard Account object.
+2. If you are testing on local host, have Self-signed certificate installed and have allowed your browser to accept it. In this case set the RUNNING_ON_HEROKU env var to false.
 
 
 
