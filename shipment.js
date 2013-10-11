@@ -32,7 +32,7 @@ Shipment.prototype.getInvoices = function getInvoices(authorization, instanceUrl
 
 	//this starts building the REST call to query for the list of line items
 	var reqOptions = {
-		url: instanceUrl + '/services/data/v28.0/query?q=' + q,
+		url: instanceUrl + '/services/data/v29.0/query?q=' + q,
 		headers: {
 			'Authorization': this._formatAuthHeader(authorization)
 		}
@@ -43,7 +43,7 @@ Shipment.prototype.getInvoices = function getInvoices(authorization, instanceUrl
 		if (err) {
 			return self.emit('error', err);
 		}
-		//once the request returns a response it sends the body to query for invoices based off of the Invoice id's related to these line items
+		//once the request returns a response it sends the body to query for invoices based off of the invoice id's related to these line items
 		self._getInvoicesFromIds(authorization, instanceUrl, JSON.parse(body));
 	});
 };
@@ -57,7 +57,7 @@ Shipment.prototype._getInvoicesFromIds = function getInvoicesFromIds(authorizati
 
 	var authorization = this._formatAuthHeader(authorization);
 	var reqOptions = {
-		url: instanceUrl + '/services/data/v28.0/query?q=' + q,
+		url: instanceUrl + '/services/data/v29.0/query?q=' + q,
 		headers: {
 			'Authorization': authorization
 		}
@@ -80,7 +80,7 @@ Shipment.prototype._getInvoicesFromIds = function getInvoicesFromIds(authorizati
 //     invoiceId: req.params.invoiceId
 //   }
 Shipment.prototype.ship = function ship(so) {
-	/* once the app is told to ship, it creates a post to post to the Account chatter feed */
+	/* once the app is told to ship, it creates a post to post to the account chatter feed */
 	var body = {
 		ParentId: so.invAccountId,
 		Body: this._getShipmentChatterMsg(so)
@@ -89,7 +89,7 @@ Shipment.prototype.ship = function ship(so) {
 	var authorization = this._formatAuthHeader(so.authorization);
 
 	var reqOptions = {
-		url: so.instanceUrl + '/services/data/v28.0/sobjects/FeedItem/',
+		url: so.instanceUrl + '/services/data/v29.0/sobjects/FeedItem/',
 		method: 'POST',
 		headers: {
 			'Authorization': authorization,
@@ -116,7 +116,7 @@ Shipment.prototype._closeInvoice = function _closeInvoice(so) {
 		'Status__C': 'Closed'
 	}
 	var reqOptions = {
-		url: so.instanceUrl + '/services/data/v28.0/sobjects/Invoice__C/' + so.invoiceId,
+		url: so.instanceUrl + '/services/data/v29.0/sobjects/Invoice__C/' + so.invoiceId,
 		method: 'PATCH',
 		headers: {
 			'Authorization': authorization,
