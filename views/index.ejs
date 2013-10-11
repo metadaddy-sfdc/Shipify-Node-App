@@ -143,7 +143,7 @@
 				}
 			}).done(function(data, textStatus, jqXHR) {
 				//$('#invoices').html(JSON.stringify(data));
-				$("#confirmMsg").text(invoice_name + " is now closed. Please click cancel to close this screen.);
+				$("#confirmMsg").text(invoice_name + " is now closed. Please click cancel to close this screen.");
 				$('#shipInvoicePage').hide();
 				$('#shipped').show();
 			}).fail(function(jqXHR, textStatus, errorThrown) {
