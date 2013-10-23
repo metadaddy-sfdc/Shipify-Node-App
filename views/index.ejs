@@ -35,11 +35,11 @@
           <section class="opportunity-overview">
             <div class="content">
                 <h2 id="accName" />
-                <h1 id="invTotal"/>
+                <h2 id="invTotal" style="font-size: 350%; font-weight: bold; padding-bottom: .2em;"/>
             </div>
           </section>
         </div>
-          <section class="data-capture-buttons one-buttons">
+          <section class="data-capture-buttons one-buttons" style="overflow:visible;">
               <div class="content">
                   <section class="data-capture-buttons one-buttons">
                       <a href="#" id="shipIt" onClick="ship()" style="text-transform:none;" >Ship It</a><br/>
@@ -99,7 +99,7 @@
 		            var invTotal = this.Invoice_Total__c;
 		            var invId = this.Id;
 		            var invName = this.Name;
-		            var accName = this.Account__r.Name;
+		            //var accName = this.Account__r.Name;
 		            var accId = this.Account__c;
 		             
 		            var newLi = $('<li></li>');     
