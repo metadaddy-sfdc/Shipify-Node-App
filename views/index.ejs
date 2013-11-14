@@ -51,12 +51,19 @@
 
       <!-- shipped confirmation page -->
       <div id="shipped" style='display:none'>
-          <section class="opportunity-overview">
+          <section class="opportunity-overview" style="height:auto;">
 
             <div class="content">
                 <h1>Shipped!</h1>
                 <h2 id="confirmMsg" />
             </div>
+          </section>
+          <section class="data-capture-buttons one-buttons" >
+              <div class="content">
+                  <section class="data-capture-buttons one-buttons" >
+                      <a href="javascript:void(0)" onclick="getInvoices();" tyle="text-transform:none;" >Proceed</a>	
+                  </section>
+               </div>
           </section>
 
       </div> <!-- end shipped -->
@@ -99,7 +106,7 @@
 		            var invTotal = this.Invoice_Total__c;
 		            var invId = this.Id;
 		            var invName = this.Name;
-		            var accName = this.Account__r.Name;
+		            var accName = this.Account__r ? this.Account__r.Name : null;
 		            var accId = this.Account__c;
 		             
 		            var newLi = $('<li></li>');     
@@ -145,7 +152,7 @@
 				}
 			}).done(function(data, textStatus, jqXHR) {
 				//$('#invoices').html(JSON.stringify(data));
-				$("#confirmMsg").text(invoice_name + " is now closed. Please click cancel to close this screen.");
+				$("#confirmMsg").text(invoice_name + " is now closed. Please click proceed to close this screen.");
 				$('#shipInvoicePage').hide();
 				$('#shipped').show();
 			}).fail(function(jqXHR, textStatus, errorThrown) {
